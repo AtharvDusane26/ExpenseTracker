@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.Model.OutcomeSources
 {
-    public interface IOutcome
+    public interface IOutcome : ITransaction
     {
-        string Name { get; }
-        double Amount { get; }
         OutcomeType OutComeType { get; }
-        bool Freeze { get; }
         void UpdateOutcomeType(OutcomeType outcomeType);
-        void UpdateFreezingStatus(bool status);
+       
     }
 }

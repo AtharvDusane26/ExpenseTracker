@@ -8,5 +8,9 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public class DailyIncome : Income
     {
+        public DailyIncome(string name, float amount) : base(name, amount) 
+        {
+            
+        }
     }
 }
