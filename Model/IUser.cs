@@ -17,5 +17,6 @@ namespace ExpenseTracker.Model
         double Balance { get; }
         List<ITransaction> Transactions { get; }
         List<IExpense> UserExpenses { get; }
+        void Create(string name, string phoneNumber, int age, double initialBalance);
     }
 }

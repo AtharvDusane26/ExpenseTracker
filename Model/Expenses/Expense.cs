@@ -60,7 +60,7 @@ namespace ExpenseTracker.Model.Expenses
                 _date = value;
             }
         }
-        public string Description
+        public string Descreption
         {
             get
             {

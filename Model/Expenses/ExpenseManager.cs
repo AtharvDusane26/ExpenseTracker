@@ -17,7 +17,7 @@ namespace ExpenseTracker.Model.Expenses
         // to create Expense
         public void CreateExpense(string name, double amount, DateTime date, string description)
         {
-            var id = Guid.NewGuid().ToString();
+            var id = $"{_user.Name}_{_user.UserExpenses.Count() +1}";
             Expense expense = new Expense(id);
             expense.Name = name;
             expense.Amount = amount;
@@ -30,19 +30,13 @@ namespace ExpenseTracker.Model.Expenses
         //To update Expense
         public void UpdateExpense(string id, string name, double amount, DateTime date, string description)
         {
-            var expense = _user.UserExpenses.FirstOrDefault(e => e.ExpenseId == id);
+            var expense = _user.UserExpenses.FirstOrDefault(e => e.ExpenseId == id) as Expense;
             if (expense != null)
             {
-                var updatedExpense = new Expense(id)
-                {
-                    Name = name,
-                    Amount = amount,
-                    DateOfExpense = date,
-                    Descreption = description
-                };
-
-                int index = _user.UserExpenses.IndexOf(expense);
-                _user.UserExpenses[index] = updatedExpense;  // replace old with new
+                expense.Name = name;
+                expense.Amount = amount;
+                expense.DateOfExpense = date;
+                expense.Descreption = description;
             }
         }
         //to delete Expense
@@ -63,5 +57,5 @@ namespace ExpenseTracker.Model.Expenses
     }
 
 }
-    
+
 
