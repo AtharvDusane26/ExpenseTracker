@@ -9,7 +9,7 @@ using ExpenseTracker.Model.Transactions;
 
 namespace ExpenseTracker.Model
 {
-    public partial class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider
+    public class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider
     {
         private string _userId;
         private string _name;
