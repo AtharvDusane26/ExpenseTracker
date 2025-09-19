@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Model.StaticData;
+using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +10,17 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public abstract class Income : Transaction, IIncome
     {
-        private SourceOfIncome _sourceOfIncome;
-        public Income(string name, float amount) : base (name,amount)
+        private SourceOfIncome _source;
+        public DateTime DateOfIncome { get; set; }
+
+        public Income(string name, double amount, SourceOfIncome source = SourceOfIncome.Salary)
+            : base(name, amount)
         {
-           
-        }      
-        public SourceOfIncome SourceOfIncome
-        {
-            get
-            {
-                return _sourceOfIncome;
-            }
-        }  
-        public void UpdateSourceOfIncome(SourceOfIncome sourceOfIncome)
-        {
-           _sourceOfIncome = sourceOfIncome;
-        }      
+            _source = source;
+        }
+
+        public SourceOfIncome SourceOfIncome => _source;
+
+        public void UpdateSourceOfIncome(SourceOfIncome source) => _source = source;
     }
 }

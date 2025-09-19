@@ -9,21 +9,7 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public class MonthlyIncome : Income
     {
-        private DateTime _dateOfIncome;
-        public MonthlyIncome(string name, float amount) : base(name, amount) 
-        {
-            
-        }
-        public DateTime DateOfIncome
-        {
-            get
-            {
-                return _dateOfIncome;
-            }
-            set
-            {
-                _dateOfIncome = value;
-            }
-        }
+        public MonthlyIncome(string name, double amount, SourceOfIncome source = SourceOfIncome.Salary)
+            : base(name, amount, source) { }
     }
 }

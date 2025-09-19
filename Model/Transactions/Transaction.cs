@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.Model
+namespace ExpenseTracker.Model.Transactions
 {
     public class Transaction : ITransaction
     {
         private string _name;
-        private string _id="";
+        private string _id = "";
         private double _amount;
         private bool _freeze = false;
         private int _dayOfTransaction = 1;
         private bool _giveReminder;
-        public Transaction(string name, float amount)
+        public Transaction(string name, double amount)
         {
             _name = name;
             _amount = amount;
@@ -95,6 +95,10 @@ namespace ExpenseTracker.Model
         {
             return $"This is a gentle reminder that your transaction ({_name}) of Rs.{_amount} is pending";
 
+        }
+        public virtual bool IsDue(DateTime currentDate)
+        {
+            return !_freeze && currentDate.Day == _dayOfTransaction;
         }
     }
 }

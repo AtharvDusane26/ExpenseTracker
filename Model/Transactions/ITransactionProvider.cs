@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.Model
+namespace ExpenseTracker.Model.Transactions
 {
-    public interface IOutcomeProvider
+    public interface ITransactionProvider 
     {
-       List<IOutcome> Outcomes { get; }
+        List<ITransaction> Transactions { get; }
     }
 }

@@ -2,9 +2,15 @@
 {
     public enum SourceOfIncome
     {
-        Job,
+        Salary,
         Business,
         Other
+    }
+    public enum IncomeType
+    {
+        Daily,
+        Monthly,
+        Yearly
     }
     public enum OutcomeType
     {

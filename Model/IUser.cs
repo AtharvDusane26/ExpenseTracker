@@ -1,5 +1,6 @@
 ﻿using ExpenseTracker.Model.Expenses;
 using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ namespace ExpenseTracker.Model
         string PhoneNumber { get; }
         int Age { get; }
         double Balance { get; }
-        List<ITransaction> Transactions { get; }
-        List<IExpense> UserExpenses { get; }
+        void Create(string name, string phoneNumber, int age, double initialBalance);
     }
 }

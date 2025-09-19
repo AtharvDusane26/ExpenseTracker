@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.Model.StaticData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,8 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public class YearlyIncome : Income
     {
-        public YearlyIncome(string name, float amount) : base(name, amount)
-        {
-            
-        }
+        public DateTime DateOfIncome { get; set; }
+        public YearlyIncome(string name, double amount, SourceOfIncome source = SourceOfIncome.Other)
+            : base(name, amount, source) { }
     }
 }

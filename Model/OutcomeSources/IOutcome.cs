@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Model.StaticData;
+using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

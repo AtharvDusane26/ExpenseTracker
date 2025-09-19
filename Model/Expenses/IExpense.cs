@@ -12,6 +12,9 @@ namespace ExpenseTracker.Model.Expenses
         string Name { get; }
         double Amount { get; }
         DateTime DateOfExpense { get; }
-        string Descreption { get; }
+        string Description { get; }
+        string Category { get; }
+        bool Freeze { get; }
+        void FreezeTransaction(bool status);
     }
 }

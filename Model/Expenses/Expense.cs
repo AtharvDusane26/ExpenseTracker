@@ -13,6 +13,8 @@ namespace ExpenseTracker.Model.Expenses
         private double _amount;
         private DateTime _date;
         private string _description;
+        private string _category;
+        private bool _freeze = false;
         public Expense(string id)
         {
             _expenseId =id;
@@ -70,6 +72,29 @@ namespace ExpenseTracker.Model.Expenses
             {
                 _description = value;
             }
+        }
+        public string Category 
+        { 
+            get
+            {
+                return _category;
+            }
+            internal set 
+            {
+                if (!_freeze)
+                    _category = value;
+            } 
+        }
+        public bool Freeze
+        {
+            get
+            {
+                return _freeze;
+            }
+        }
+        public void FreezeTransaction(bool status)
+        {
+            _freeze = status;
         }
     }
 }

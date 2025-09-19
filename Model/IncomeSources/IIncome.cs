@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Model.StaticData;
+using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public interface IIncome : ITransaction
     {
+        public DateTime DateOfIncome { get; set; }
         SourceOfIncome SourceOfIncome { get; }
         void UpdateSourceOfIncome(SourceOfIncome sourceOfIncome);
     }

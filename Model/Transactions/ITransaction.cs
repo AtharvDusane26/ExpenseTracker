@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpenseTracker.Model
+namespace ExpenseTracker.Model.Transactions
 {
     public interface ITransaction
     {
@@ -12,7 +12,7 @@ namespace ExpenseTracker.Model
         string Name { get; }
         double Amount { get; }
         bool Freeze { get; }
-        int DayOfTransaction{ get; }
+        int DayOfTransaction { get; }
         bool GiveReminder { get; }
         void FreezeTransaction(bool status);
         void Create(string id);
@@ -20,6 +20,7 @@ namespace ExpenseTracker.Model
         void UpdateTransactionDay(int day);
         string Remind();
         string WarnForPendingTransaction();
+        bool IsDue(DateTime currentDate);
 
     }
 

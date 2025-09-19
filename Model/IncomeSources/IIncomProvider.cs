@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.Model
 {
-    public interface IIncomeProvider
+    public interface IIncomeProvider : ITransactionProvider
     {
         List<IIncome> Incomes { get; }
         IIncome GetIncome(string incomeName);
