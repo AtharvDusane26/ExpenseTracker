@@ -1,0 +1,102 @@
+﻿using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Transactions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExpenseTracker.DataManagement.Entities
+{
+    public abstract class EntityIncome : EntityTransaction
+    {
+        public EntityIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
+        public DateTime DateOfIncome { get; set; }
+        public string SourceOfIncome { get; set; }
+        public override abstract ITransaction Get();
+        public override  abstract void Set(ITransaction value);
+
+    }
+    public class EntityDailyIncome: EntityIncome
+    {
+        public EntityDailyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
+        public override ITransaction Get()
+        {
+            var income = new DailyIncome(Name, Amount, (Model.StaticData.SourceOfIncome)Enum.Parse(typeof(Model.StaticData.SourceOfIncome), SourceOfIncome));
+            income.Create(Id);
+            income.UpdateTransactionDay(this.DayOfTransaction);
+            income.GiveReminder = this.GiveReminder;
+            income.FreezeTransaction(this.Freeze);
+            return income;
+        }
+        public override void Set(ITransaction value)
+        {
+            var income = value as DailyIncome;
+            if (income != null)
+            {
+                Name = income.Name;
+                Amount = income.Amount;
+                DayOfTransaction = income.DayOfTransaction;
+                GiveReminder = income.GiveReminder;
+                Freeze = income.Freeze;
+                SourceOfIncome = income.SourceOfIncome.ToString();
+            }
+        }
+        public class EntityMonthlyIncome : EntityIncome
+        {
+            public EntityMonthlyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
+            public override ITransaction Get()
+            {
+                var income = new MonthlyIncome(Name, Amount, (Model.StaticData.SourceOfIncome)Enum.Parse(typeof(Model.StaticData.SourceOfIncome), SourceOfIncome));
+                income.Create(Id);
+                income.UpdateTransactionDay(this.DayOfTransaction);
+                income.GiveReminder = this.GiveReminder;
+                income.FreezeTransaction(this.Freeze);
+                return income;
+            }
+            public override void Set(ITransaction value)
+            {
+                var income = value as MonthlyIncome;
+                if (income != null)
+                {
+                    Name = income.Name;
+                    Amount = income.Amount;
+                    DayOfTransaction = income.DayOfTransaction;
+                    GiveReminder = income.GiveReminder;
+                    Freeze = income.Freeze;
+                    SourceOfIncome = income.SourceOfIncome.ToString();
+                }
+            }
+        }
+    }
+    public class EntityYearlyIncome : EntityIncome
+    {
+        public DateTime DateOfIncome { get; set; }
+        public EntityYearlyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
+        public override  ITransaction Get()
+        {
+            var income = new YearlyIncome(Name, Amount, (Model.StaticData.SourceOfIncome)Enum.Parse(typeof(Model.StaticData.SourceOfIncome), SourceOfIncome));
+            income.Create(Id);
+            income.UpdateTransactionDay(this.DayOfTransaction);
+            income.GiveReminder = this.GiveReminder;
+            income.FreezeTransaction(this.Freeze);
+            income.DateOfIncome = DateOfIncome;
+            return income;
+        }
+        public override void Set(ITransaction value)
+        {
+            var income = value as YearlyIncome;
+            if (income != null)
+            {
+                Name = income.Name;
+                Amount = income.Amount;
+                DayOfTransaction = income.DayOfTransaction;
+                GiveReminder = income.GiveReminder;
+                Freeze = income.Freeze;
+                DateOfIncome = income.DateOfIncome;
+                SourceOfIncome = income.SourceOfIncome.ToString();
+            }
+        }
+    }
+
+}
