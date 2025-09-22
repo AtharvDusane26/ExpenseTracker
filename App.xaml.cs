@@ -1,4 +1,5 @@
-﻿using ExpenseTracker.View;
+﻿using ExpenseTracker.Model;
+using ExpenseTracker.View;
 using System.Configuration;
 using System.Data;
 using System.Windows;

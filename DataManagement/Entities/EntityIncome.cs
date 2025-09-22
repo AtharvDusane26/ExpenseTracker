@@ -3,20 +3,25 @@ using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpenseTracker.DataManagement.Entities
 {
+    [DataContract]
     public abstract class EntityIncome : EntityTransaction
     {
         public EntityIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
+        [DataMember]
         public DateTime DateOfIncome { get; set; }
+        [DataMember]
         public string SourceOfIncome { get; set; }
         public override abstract ITransaction Get();
         public override  abstract void Set(ITransaction value);
 
     }
+    [DataContract]
     public class EntityDailyIncome: EntityIncome
     {
         public EntityDailyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
@@ -42,6 +47,7 @@ namespace ExpenseTracker.DataManagement.Entities
                 SourceOfIncome = income.SourceOfIncome.ToString();
             }
         }
+        [DataContract]
         public class EntityMonthlyIncome : EntityIncome
         {
             public EntityMonthlyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
@@ -69,8 +75,10 @@ namespace ExpenseTracker.DataManagement.Entities
             }
         }
     }
+    [DataContract]
     public class EntityYearlyIncome : EntityIncome
     {
+        [DataMember]
         public DateTime DateOfIncome { get; set; }
         public EntityYearlyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         public override  ITransaction Get()

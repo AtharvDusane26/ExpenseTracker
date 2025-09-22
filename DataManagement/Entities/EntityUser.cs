@@ -1,28 +1,31 @@
 ﻿using ExpenseTracker.Model;
 using ExpenseTracker.Model.IncomeSources;
 using ExpenseTracker.Model.OutcomeSources;
+using System.Runtime.Serialization;
 using static ExpenseTracker.DataManagement.Entities.EntityDailyIncome;
 
 namespace ExpenseTracker.DataManagement.Entities
 {
+    [DataContract]
     public class EntityUser : EntityBase
     {
         public EntityUser(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
-
+        [DataMember]
         public string Name { get; set; }
-
+        [DataMember]
         public string PhoneNumber { get; set; }
-
+        [DataMember]
         public int Age { get; set; }
-
+        [DataMember]
         public double Balance { get; set; }
 
-
+        [DataMember]
         public List<EntityTransaction> Transactions { get; set; }
-
+        [DataMember]
         public List<EntityExpense> UserExpenses { get; set; }
-
+        [DataMember]
         public List<EntityFinancialGoal> Goals { get; set; }
+        [DataMember]
         public List<EntitySaving> Savings { get; set; }
 
         public User Get()

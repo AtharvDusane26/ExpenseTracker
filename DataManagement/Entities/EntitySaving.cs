@@ -3,18 +3,22 @@ using ExpenseTracker.Model.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace ExpenseTracker.DataManagement.Entities
 {
+    [DataContract]
     public class EntitySaving: EntityBase
     {
         public EntitySaving(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
-       
+        [DataMember]
         public double Amount { get; set; }
+        [DataMember]
         public DateTime Date { get; set; }
+        [DataMember]
         public string Category { get; set; }
         public ISaving Get()
         {

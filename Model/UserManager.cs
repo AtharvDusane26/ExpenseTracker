@@ -20,7 +20,11 @@ namespace ExpenseTracker.Model
         private FinancialGoalsManager _goalsManager;
         private ReportManager _reportManager;
         private UserMonitor _userMonitor;
-        public UserManager(string userId)
+        public UserManager()
+        {
+            InitializeManagers();
+        }
+        public void LoadUser(string userId)
         {
             _user = GetUser(userId) ?? throw new ArgumentNullException("user not found");
             InitializeManagers();
