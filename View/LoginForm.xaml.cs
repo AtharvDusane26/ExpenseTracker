@@ -54,9 +54,9 @@ namespace ExpenseTracker.View
                 window.Close();
             }
         }
-        public void SetComponent(object component)
-        {
-           _component = component as LoginViewModel;
-        }
+            public void SetComponent(object component)
+            {
+               _component = component as LoginViewModel;
+            }
     }
 }

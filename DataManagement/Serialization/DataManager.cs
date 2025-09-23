@@ -11,11 +11,25 @@ namespace ExpenseTracker.DataManagement.Serialization
 {
     public class DataManager
     {
-        public void Save<T>(T serializableObject, string fileName, DataContractSerializerSettings settings = null)
+        private DataContractSerializerSettings Settings
+        {
+            get
+            {
+                return new DataContractSerializerSettings()
+                {
+                    KnownTypes = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .SelectMany(assembly => assembly.GetTypes())
+                    .Where(type => type.IsClass && type.GetCustomAttributes(typeof(DataContractAttribute), true).Any())
+                    .ToList()
+                };
+            }
+        }
+        public void Save<T>(T serializableObject, string fileName)
         {
             try
             {
-                DataContractSerializer serializer = new DataContractSerializer(typeof(T), settings);
+                DataContractSerializer serializer = new DataContractSerializer(typeof(T), Settings);
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     using (XmlTextWriter xmlWriter = new XmlTextWriter(memoryStream, null))
@@ -41,13 +55,13 @@ namespace ExpenseTracker.DataManagement.Serialization
                 throw;
             }
         }
-        public T Read<T>(string fileName, DataContractSerializerSettings settings = null)
+        public T Read<T>(string fileName)
         {
             if (File.Exists(fileName))
             {
                 try
                 {
-                    DataContractSerializer serializer = new DataContractSerializer(typeof(T), settings);
+                    DataContractSerializer serializer = new DataContractSerializer(typeof(T), Settings);
                     using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
                     {
                         T retVal = (T)serializer.ReadObject(fileStream);

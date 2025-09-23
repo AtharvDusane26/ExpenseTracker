@@ -21,6 +21,7 @@ namespace ExpenseTracker.Model.Transactions
         string Remind();
         string WarnForPendingTransaction();
         bool IsDue(DateTime currentDate);
+        void SetReminder(bool reminder);
 
     }
 
