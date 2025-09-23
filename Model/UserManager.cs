@@ -119,7 +119,10 @@ namespace ExpenseTracker.Model
         {
             _savingsManager.AddToSavings(amount, category);
         }
-
+        public List<ISaving> GetAllSavings()
+        {
+             return _savingsManager.Get();
+        }
         public void WithdrawFromSavings(double amount)
         {
             _savingsManager.WithdrawFromSavings(amount);

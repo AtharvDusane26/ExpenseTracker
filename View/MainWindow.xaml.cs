@@ -16,9 +16,36 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        private UserControl[] _views;
+
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _views = new UserControl[]
+           {
+                new HomeView(),
+                new IncomeView(),
+                new OutcomeView(),
+                new ExpenseView(),
+                new SavingView(),
+                new FinancialGoalsView(),
+                new ReportsView(),
+                new UserMonitorView()
+           };
+            // Set default view to Home
+            ContentArea.Content = _views[0];
+        }
+
+        private void TabButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && int.TryParse(btn.Tag.ToString(), out int index))
+            {
+                ContentArea.Content = _views[index];
+            }
         }
     }
 }

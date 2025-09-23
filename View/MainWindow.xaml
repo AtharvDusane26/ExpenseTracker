@@ -4,9 +4,31 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpenseTracker"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Expense Tracker" Height="800" Width="1000">
+  
 
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <!-- Left vertical tab panel -->
+            <ColumnDefinition Width="*"/>
+            <!-- Content area -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Vertical Tab Buttons -->
+        <StackPanel Grid.Column="0" Background="#FF2C3E50">
+            <Button Content="Home" Tag="0" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Income" Tag="1" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Outcome" Tag="2" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Expenses" Tag="3" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Savings" Tag="4" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Financial Goals" Tag="5" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Reports" Tag="6" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+            <Button Content="Monitoring" Tag="7" Style="{StaticResource TabButtonStyle}" Click="TabButton_Click"/>
+        </StackPanel>
+
+        <!-- Content Area -->
+        <ContentControl Grid.Column="1" x:Name="ContentArea"/>
     </Grid>
 </Window>

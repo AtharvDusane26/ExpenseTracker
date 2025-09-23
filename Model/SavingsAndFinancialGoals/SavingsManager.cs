@@ -33,6 +33,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         {
             return _user.GetSavingsReminders(daysBefore);
         }
+        internal List<ISaving> Get() => _user.Savings.ToList();
         private void Save()
         {
             UserManager.Save(_user as User);

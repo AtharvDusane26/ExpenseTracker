@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace ExpenseTracker.Model
 {
-    public partial class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider
+    public partial class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider,IIncomeProvider, IOutcomeProvider
     {
         private string _userId;
         private string _name;
