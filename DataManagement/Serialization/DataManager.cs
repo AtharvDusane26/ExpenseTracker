@@ -9,9 +9,9 @@ using System.Xml;
 
 namespace ExpenseTracker.DataManagement.Serialization
 {
-    public static class DataManager
+    public class DataManager
     {
-        public static void Save<T>(T serializableObject, string fileName, DataContractSerializerSettings settings = null)
+        public void Save<T>(T serializableObject, string fileName, DataContractSerializerSettings settings = null)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace ExpenseTracker.DataManagement.Serialization
                 throw;
             }
         }
-        public static T Read<T>(string fileName, DataContractSerializerSettings settings = null)
+        public T Read<T>(string fileName, DataContractSerializerSettings settings = null)
         {
             if (File.Exists(fileName))
             {

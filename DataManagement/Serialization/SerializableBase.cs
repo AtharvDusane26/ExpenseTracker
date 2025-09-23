@@ -1,5 +1,6 @@
 ﻿using ExpenseTracker.DataManagement.Entities;
 using ExpenseTracker.Model;
+using ExpenseTracker.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,9 @@ namespace ExpenseTracker.DataManagement.Serialization
         public List<User> Get()
         {
             var users = new List<User>();
-            var pocos = DataManager.Read<List<EntityUser>>(_filePath);
+            var services = ServiceProvider.Instance;
+            var dataManager = services.Resolve<DataManager>();
+            var pocos = dataManager.Read<List<EntityUser>>(_filePath);
             if (pocos != null)
             {
                 pocos.ForEach(poco =>
@@ -37,13 +40,15 @@ namespace ExpenseTracker.DataManagement.Serialization
         public void Set(List<User> value)
         {
             var pocos = new List<EntityUser>();
+            var services = ServiceProvider.Instance;
+            var dataManager = services.Resolve<DataManager>();
             foreach (var user in value)
             {
                 var entityUser = new EntityUser(user.UserId);
                 entityUser.Set(user);
                 pocos.Add(entityUser);
             }
-            DataManager.Save(pocos, _filePath);
+            dataManager.Save(pocos, _filePath);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ExpenseTracker.DataManagement.Entities
     public class EntityFinancialGoal: EntityBase
     {
         public EntityFinancialGoal(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
-        [DataMember]
+       [DataMember]
         public string Name { get; set; }
         [DataMember]
         public double TargetAmount { get; set; }

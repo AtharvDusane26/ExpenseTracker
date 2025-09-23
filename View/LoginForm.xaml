@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="ExpenseTracker.View.LoginForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExpenseTracker.View"
+        mc:Ignorable="d"
+         Height="400" Width="500"       
+        Background="#f8f9fa">
+    <TabControl>
+        <TabItem Header="Login">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <StackPanel Orientation="Vertical">
+                <TextBlock Text="Expense Tracker"
+       FontSize="22"
+       FontWeight="Bold"
+       Foreground="#333"
+       HorizontalAlignment="Center"
+       Margin="5"/>
+                    <TextBlock Text="Please Log In"
+                                FontSize="14"
+                                Foreground="#28a745"
+                                HorizontalAlignment="Center"
+                                Margin="5"/>
+                </StackPanel>
+                <!-- User Info Card -->
+                <Border Grid.Row="1"
+    Background="White"
+    CornerRadius="10"
+    Padding="10"
+    BorderBrush="#ddd"
+    BorderThickness="1"
+    >
+                    <StackPanel>
+                       
+
+                        <StackPanel Orientation="Horizontal" Margin="0 10">
+                            <TextBlock Text="Name" FontWeight="Bold" Width="120" />
+                            <TextBox  Height="25" Width="220" Text="{Binding UserName}"/>
+                        </StackPanel>
+                      
+                    </StackPanel>
+                </Border>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Row="2"
+        Orientation="Horizontal"
+        HorizontalAlignment="Center"
+        Margin="0 10 0 0"
+       >
+                    <Button Content="Log in" x:Name="btnLogin" Click="btnLogin_Click"
+        Width="120"
+        Height="35"
+        FontWeight="Bold"
+        BorderThickness="0"
+        Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Register">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <TextBlock Text="Create User"
+                   FontSize="22"
+                   FontWeight="Bold"
+                   Foreground="#333"
+                   HorizontalAlignment="Center"
+                   Margin="0 0 0 20"/>
+
+                <!-- User Info Card -->
+                <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="10"
+                Padding="20"
+                BorderBrush="#ddd"
+                BorderThickness="1"
+                >
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 10">
+                            <TextBlock Text="Name:" FontWeight="Bold" Width="120"/>
+                            <TextBox  Height="25" Width="220" Text="{Binding UserName}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0 10">
+                            <TextBlock Text="Phone Number:" FontWeight="Bold" Width="120"/>
+                            <TextBox  Height="25" Width="220" Text="{Binding PhoneNumber}"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0 10">
+                            <TextBlock Text="Age:" FontWeight="Bold" Width="120"/>
+                            <TextBox  Height="25" Width="220" Text="{Binding Age}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0 10">
+                            <TextBlock Text="Balance:" FontWeight="Bold" Width="120"/>
+                            <TextBox Height="25" Width="220" Text="{Binding InitialBalance, StringFormat=C}" Foreground="#28a745"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0 20 0 0"
+                   >
+                    <Button x:Name="btnSignUp" Content="Sign Up"
+                    Width="120" FontWeight="Bold"
+                    Height="35"                 
+                    BorderThickness="0" Click="btnSignUp_Click"
+                    Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

@@ -4,6 +4,7 @@ using ExpenseTracker.Model.IncomeSources;
 using ExpenseTracker.Model.MonitoringAndReporting;
 using ExpenseTracker.Model.OutcomeSources;
 using ExpenseTracker.Model.SavingsAndFinancialGoals;
+using ExpenseTracker.Model.Services;
 using ExpenseTracker.Model.StaticData;
 using ExpenseTracker.Model.Transactions;
 using System;
@@ -20,13 +21,10 @@ namespace ExpenseTracker.Model
         private FinancialGoalsManager _goalsManager;
         private ReportManager _reportManager;
         private UserMonitor _userMonitor;
-        public UserManager()
+
+        public void SetUser(string name)
         {
-            InitializeManagers();
-        }
-        public void LoadUser(string userId)
-        {
-            _user = GetUser(userId) ?? throw new ArgumentNullException("user not found");
+            _user = GetUser(name) ?? throw new ArgumentNullException("user not found");
             InitializeManagers();
         }
         public ReportManager ReportManager => _reportManager;
@@ -40,13 +38,14 @@ namespace ExpenseTracker.Model
             _reportManager = new ReportManager(_user);
             _userMonitor = new UserMonitor(_user);
         }
-        private User GetUser(string id)
+        private User GetUser(string name)
         {
-            SerializableBase serializableBase = new SerializableBase();
+            var services = ServiceProvider.Instance;
+            var serializableBase = services.Resolve<SerializableBase>();
             var users = serializableBase.Get();
-            if(users != null && users.Count > 0)
+            if (users != null && users.Count > 0)
             {
-               var user = users.Find(u => u.UserId == id);
+                var user = users.Find(u => u.Name == name);
                 if (user != null)
                 {
                     return user;
@@ -178,9 +177,10 @@ namespace ExpenseTracker.Model
         }
         internal static void Save(User user)
         {
-            SerializableBase serializableBase = new SerializableBase();
+            var services = ServiceProvider.Instance;
+            var serializableBase = services.Resolve<SerializableBase>();
             var users = serializableBase.Get();
-            if(users.Any(o => o.UserId == user.UserId))
+            if (users.Any(o => o.UserId == user.UserId))
             {
                 users.RemoveAll(u => u.UserId == user.UserId);
             }
