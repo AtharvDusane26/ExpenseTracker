@@ -93,14 +93,15 @@ namespace ExpenseTracker.ViewModel
             var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
             if (!ValidateInput(out string errorMessage))
             {
+                var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
                 messageBox.Show(errorMessage, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Input Error");
                 return;
             }
             if(_income == null)
             {
                 var inc = _userManager.AddIncome(IncomeType, Name, Amount);
-                inc.FreezeTransaction(Freeze);
-                inc.SetReminder(GiveReminder);
+            inc.FreezeTransaction(Freeze);
+            inc.SetReminder(GiveReminder);
                 (inc as ITransaction).UpdateTransactionDay(DayOfTransaction);
                 messageBox.Show("Income created", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Information");
             }
@@ -109,7 +110,7 @@ namespace ExpenseTracker.ViewModel
             {
                _userManager.UpdateIncome(_income.Id, IncomeType, Name, Amount, Freeze, GiveReminder,DayOfTransaction);
                 messageBox.Show("Income updated", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Information");
-            }
+        }
 
         }
         public void Fill(IIncome income)
@@ -165,6 +166,11 @@ namespace ExpenseTracker.ViewModel
 
             errorMessage = string.Empty;
             return true;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
