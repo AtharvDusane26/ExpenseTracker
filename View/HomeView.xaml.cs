@@ -36,7 +36,7 @@ namespace ExpenseTracker.View
         {
             if(sender is CheckBox cb && cb.IsChecked.HasValue)
             {
-                _viewModel.HandleNotificationRead(cb.IsChecked.Value);
+               // _viewModel.HandleNotificationRead(cb.IsChecked.Value);
             }
         }
     }
@@ -68,6 +68,16 @@ namespace ExpenseTracker.View
         {
             throw new NotImplementedException();
         }
+    }
+    public class ReadToBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isRead = (bool)value;
+            return isRead ? new SolidColorBrush(Colors.LightGray) : new SolidColorBrush(Colors.White);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 
     public class StringToBrushConverter : IValueConverter

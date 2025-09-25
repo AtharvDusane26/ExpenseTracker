@@ -4,52 +4,94 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ExpenseTracker.View"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local:StringToBrushConverter x:Key="StringToBrushConverter"/>
+        <local:ReadToBackgroundConverter x:Key="ReadToBackgroundConverter"/>
+        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="10" ShadowDepth="2" Color="#888" Opacity="0.3"/>
     </UserControl.Resources>
-    <Grid Margin="10">
-        <StackPanel>
-            <!-- Header -->
-            <TextBlock Text="🏠 Home Dashboard" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
-            <!-- Balance Section -->
-            <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,5">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="*"/>
+            <!-- Main Content -->
+        </Grid.RowDefinitions>
+
+        <!-- ================= Header ================= -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="🏠 Home Dashboard" FontSize="28" FontWeight="Bold" Foreground="#2D89EF" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding CurrentUserName}" FontSize="16" VerticalAlignment="Center"/>
+                <Ellipse Width="40" Height="40" Margin="10,0,0,0" Fill="LightGray"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ================= Main Content ================= -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <!-- Left panel -->
+                <ColumnDefinition Width="*"/>
+                <!-- Right panel -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ================= Left Panel: Balance + Chart ================= -->
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+
+                <!-- Balance Section -->
+                <Border Background="White" CornerRadius="10" Padding="15" Effect="{StaticResource ShadowEffect}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding UserBalance, StringFormat=Total Balance: ₹{0:N2}}" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SavingsBalance, StringFormat=Savings: ₹{0:N2}}" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Expenses, StringFormat=Expenses: ₹{0:N2}}" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Pie Chart Section -->
+                <Border Background="White" CornerRadius="10" Padding="15" Effect="{StaticResource ShadowEffect}">
+                    <StackPanel>
+                        <TextBlock Text="Balance Breakdown" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <lvc:PieChart Series="{Binding BalanceSeries}" Width="350" Height="250" LegendPosition="Right"/>
+
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- ================= Right Panel: Notifications ================= -->
+            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="10" Effect="{StaticResource ShadowEffect}">
                 <StackPanel>
-                    <TextBlock Text="{Binding UserBalance, StringFormat=Balance: ₹{0:N2}}" FontSize="16"/>
-                    <TextBlock Text="{Binding SavingsBalance, StringFormat=Savings: ₹{0:N2}}" FontSize="16"/>
+                    <TextBlock Text="Notifications" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ListView ItemsSource="{Binding Notifications}" Background="Transparent" BorderThickness="0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding IsRead, Converter={StaticResource ReadToBackgroundConverter}}"
+                                        BorderThickness="2"
+                                        BorderBrush="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
+                                        CornerRadius="8"
+                                        Padding="8"
+                                        Margin="0 0 0 5">
+                                    <DockPanel>
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                                            <TextBlock Text="🔔" Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}" FontSize="16" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding Message}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button Content="✔"
+                                                Width="30" Height="30"
+                                                DockPanel.Dock="Right"
+                                                Command="{Binding DataContext.MarkAsReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"/>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
             </Border>
 
-            <!-- Notifications Section -->
-            <ListView ItemsSource="{Binding Notifications}" SelectedItem="{Binding SelectedNotification}" Background="Transparent">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="2" Width="800"
-                    BorderBrush="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
-                    CornerRadius="6"
-                    Margin="5"
-                    Padding="5">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="🔔"
-                               Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
-                               FontSize="16"
-                               Margin="0,0,8,0"/>
-                                <CheckBox  Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Mark as read"   
-            Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"  Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"/>
-                                <TextBlock Text="{Binding Message}"
-                               FontWeight="Bold"
-                               Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
-                               FontSize="14"/>
-
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-        </StackPanel>
+        </Grid>
     </Grid>
-
 </UserControl>
