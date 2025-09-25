@@ -6,10 +6,15 @@
              xmlns:local="clr-namespace:ExpenseTracker.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:StringToBrushConverter x:Key="StringToBrushConverter"/>
+    </UserControl.Resources>
     <Grid Margin="10">
         <StackPanel>
+            <!-- Header -->
             <TextBlock Text="🏠 Home Dashboard" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
 
+            <!-- Balance Section -->
             <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,5">
                 <StackPanel>
                     <TextBlock Text="{Binding UserBalance, StringFormat=Balance: ₹{0:N2}}" FontSize="16"/>
@@ -17,18 +22,34 @@
                 </StackPanel>
             </Border>
 
-            <Border BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,5">
-                <StackPanel>
-                    <TextBlock Text="🔔 Notifications" FontWeight="Bold" FontSize="16"/>
-                    <ItemsControl ItemsSource="{Binding Notifications}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" Margin="5,2"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
+            <!-- Notifications Section -->
+            <ListView ItemsSource="{Binding Notifications}" SelectedItem="{Binding SelectedNotification}" Background="Transparent">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2" Width="800"
+                    BorderBrush="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
+                    CornerRadius="6"
+                    Margin="5"
+                    Padding="5">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🔔"
+                               Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
+                               FontSize="16"
+                               Margin="0,0,8,0"/>
+                                <CheckBox  Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Mark as read"   
+            Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"  Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"/>
+                                <TextBlock Text="{Binding Message}"
+                               FontWeight="Bold"
+                               Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
+                               FontSize="14"/>
+
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
         </StackPanel>
     </Grid>
+
 </UserControl>

@@ -93,7 +93,6 @@ namespace ExpenseTracker.ViewModel
             var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
             if (!ValidateInput(out string errorMessage))
             {
-                var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
                 messageBox.Show(errorMessage, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Input Error");
                 return;
             }
@@ -166,11 +165,6 @@ namespace ExpenseTracker.ViewModel
 
             errorMessage = string.Empty;
             return true;
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,34 +1,54 @@
-﻿using ExpenseTracker.Model;
+﻿using ExpenseTracker.Model.Notifications;
 using ExpenseTracker.Model.Services;
+using ExpenseTracker.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ExpenseTracker.ViewModel
+namespace ExpenseTracker.Model.ViewModels
 {
     public class HomeViewModel : ExpenseTrackerViewModelBase
     {
-
         private double _userBalance;
         private double _savingsBalance;
-        private ObservableCollection<string> _notifications = new ObservableCollection<string>();
+        private INotification _selectedNotification;
+        private ObservableCollection<INotification> _notifications = new ObservableCollection<INotification>();
+
         public HomeViewModel() : base()
         {
             Init();
+        }
+        public INotification SelectedNotification
+        {
+            get => _selectedNotification;
+            set => SetProperty(ref _selectedNotification, value);
+
         }
         private void Init()
         {
             var userManager = ServiceProvider.Instance.Resolve<UserManager>();
             UserBalance = userManager.GetBalance();
             SavingsBalance = userManager.GetSavingsBalance();
-            Notifications = new ObservableCollection<string>(
-                userManager.GetReminders(1).Select(o => o.Message)
-                           .Concat(userManager.GetSavingsReminders(1).Select(o => o.Message))
+            var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            // Combine all notifications (transaction + savings)
+            Notifications = new ObservableCollection<INotification>(
+                notificationManager.GetUnreadNotifications()
+                           .OrderByDescending(o => o.Date) // newest first
             );
+        }
+        public void HandleNotificationRead(bool value)
+        {
+            var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            if (SelectedNotification == null || !value) return;
+            if (value)
+            {
+                notificationManager.MarkAsRead(SelectedNotification.Id);
+            }
+            else
+            {
+                notificationManager.MarkAsUnRead(SelectedNotification.Id);
+            }
+            Init();
         }
         public double UserBalance
         {
@@ -42,11 +62,12 @@ namespace ExpenseTracker.ViewModel
             set => SetProperty(ref _savingsBalance, value);
         }
 
-        public ObservableCollection<string> Notifications
+        public ObservableCollection<INotification> Notifications
         {
             get => _notifications;
             set => SetProperty(ref _notifications, value);
         }
+
         protected override void Refresh()
         {
             Init();

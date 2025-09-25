@@ -22,10 +22,6 @@ namespace ExpenseTracker.ViewModel
         }
         protected void Init()
         {
-            Refresh();
-        }
-        public void Refresh()
-        {
             var userManager = ServiceProvider.Instance.Resolve<UserManager>();
             Incomes = new ObservableCollection<IIncome>(userManager.GetAllIncomes());
         }

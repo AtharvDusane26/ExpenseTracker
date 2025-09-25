@@ -27,7 +27,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn MinWidth="100" Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn MinWidth="100" Header="Amount" Binding="{Binding Amount}" />
-                <DataGridTextColumn Header="Type" Binding="{Binding OutcomeType}" />
+                <DataGridTextColumn Header="Type" Binding="{Binding OutComeType, StringFormat={}{0}}" />                  
                 <DataGridTextColumn MinWidth="100" Header="Day" Binding="{Binding DayOfTransaction}" />
 
                 <DataGridTemplateColumn MinWidth="120" Header="">

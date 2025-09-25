@@ -18,7 +18,7 @@ namespace ExpenseTracker.ViewModel
         private double _amount;
         private DateTime _dateOfExpense = DateTime.Today;
         private string _description;
-        private OutcomeType _category;  // Assuming you have OutcomeType enum for expense type
+        private string _category;  // Assuming you have OutcomeType enum for expense type
         private bool _freeze;
 
         private IExpense _expense;
@@ -59,7 +59,7 @@ namespace ExpenseTracker.ViewModel
             set => SetProperty(ref _description, value);
         }
 
-        public OutcomeType Category
+        public string Category
         {
             get => _category;
             set => SetProperty(ref _category, value);
@@ -81,7 +81,7 @@ namespace ExpenseTracker.ViewModel
             Amount = expense.Amount;
             DateOfExpense = expense.DateOfExpense;
             Description = expense.Description;
-            Category = (OutcomeType)Enum.Parse(typeof(OutcomeType), expense.Category);
+            Category =  expense.Category;
             Freeze = expense.Freeze;
         }
 
