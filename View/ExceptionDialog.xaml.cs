@@ -26,6 +26,7 @@ namespace ExpenseTracker.View
         {
             InitializeComponent();
             _exception = ex;
+            DescriptionBox.Text  = message;
             if (_exception != null)
             {
                 BuildTreeFromException(null, _exception);
@@ -34,6 +35,7 @@ namespace ExpenseTracker.View
             {
                 DetailButton.Visibility = Visibility.Collapsed;
             }
+            Title = "Expense Tracker - Error";
         }
      
         private void QuitButton_Click(object sender, RoutedEventArgs e)

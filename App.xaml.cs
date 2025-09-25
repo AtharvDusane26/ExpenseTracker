@@ -1,5 +1,6 @@
 ﻿using ExpenseTracker.DataManagement.Serialization;
 using ExpenseTracker.Model;
+using ExpenseTracker.Model.Notifications;
 using ExpenseTracker.Model.Services;
 using ExpenseTracker.View;
 using ExpenseTracker.ViewModel;
@@ -48,6 +49,7 @@ namespace ExpenseTracker
         private void RegisterServices()
         {
             var services = ServiceProvider.Instance;
+            services.AddSingleton(new NotificationManager());
             services.AddSingleton(new UserManager());
             services.AddSingleton(new DataManager());
             services.AddTransient(f => new SerializableBase());

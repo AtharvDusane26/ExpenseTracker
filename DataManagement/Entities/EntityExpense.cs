@@ -16,6 +16,7 @@ namespace ExpenseTracker.DataManagement.Entities
         public string Name { get; set; }
         [DataMember]
         public double Amount { get; set; }
+        [DataMember]
         public DateTime DateOfExpense { get; set; }
         [DataMember]
         public string Description { get; set; }

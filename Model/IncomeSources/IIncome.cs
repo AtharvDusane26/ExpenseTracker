@@ -10,8 +10,9 @@ namespace ExpenseTracker.Model.IncomeSources
 {
     public interface IIncome : ITransaction
     {
-        public DateTime DateOfIncome { get; set; }
+        public DateTime? DateOfCredited { get; set; }
         SourceOfIncome SourceOfIncome { get; }
         void UpdateSourceOfIncome(SourceOfIncome sourceOfIncome);
+        bool CheckForLastCredit(out string message);
     }
 }

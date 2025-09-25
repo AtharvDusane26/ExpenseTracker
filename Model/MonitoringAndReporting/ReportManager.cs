@@ -18,7 +18,7 @@ namespace ExpenseTracker.Model.MonitoringAndReporting
         // 1. Summary Report
         public string GetMonthlySummary(int month, int year)
         {
-            var incomes = _user.Incomes.Where(i => i.DateOfIncome.Month == month && i.DateOfIncome.Year == year).Sum(i => i.Amount);
+            var incomes = _user.Incomes.Where(i => i.DateOfCredited?.Month == month && i.DateOfCredited?.Year == year).Sum(i => i.Amount);
             var expenses = _user.UserExpenses.Where(e => e.DateOfExpense.Month == month && e.DateOfExpense.Year == year).Sum(e => e.Amount);
             var savings = _user.Savings.Where(s => s.Date.Month == month && s.Date.Year == year).Sum(s => s.Amount);
 

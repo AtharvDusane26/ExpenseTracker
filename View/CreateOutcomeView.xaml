@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="ExpenseTracker.View.CreateOutcomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ExpenseTracker.View"
+             mc:Ignorable="d" 
+             Height="400" Width="500">
+    <Grid x:Name="OutcomeEntryControl" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Name -->
+        <TextBlock Margin="4" Grid.Row="0" Grid.Column="0" Text="Outcome Name:" VerticalAlignment="Center"/>
+        <TextBox Margin="4" Grid.Row="0" Height="30" Grid.Column="1" 
+             Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Amount -->
+        <TextBlock Margin="4" Grid.Row="1" Grid.Column="0" Text="Amount:" VerticalAlignment="Center"/>
+        <TextBox Margin="4" Height="30" Grid.Row="1" Grid.Column="1" 
+             Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Expense Category -->
+        <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Outcome Type:" VerticalAlignment="Center"/>
+        <ComboBox Margin="4" Height="30" Grid.Row="2" Grid.Column="1"
+              ItemsSource="{Binding OutcomeTypeOptions}"
+              SelectedItem="{Binding OutcomeType}"/>
+
+        <!-- Date Of Expense -->
+        <TextBlock Visibility="Collapsed" Margin="4" Grid.Row="3" Grid.Column="0" Text="Date:" VerticalAlignment="Center"/>
+        <DatePicker Visibility="Collapsed" Margin="4" Height="30" Grid.Row="3" Grid.Column="1"
+                SelectedDate="{Binding DateOfExpense}"/>
+       
+        <!-- Fixed Expense -->
+        <TextBlock Margin="4" Grid.Row="5" Grid.Column="0" Text="Fixed Expense:" VerticalAlignment="Center"/>
+        <CheckBox Margin="4" Height="30" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1"
+              IsChecked="{Binding Freeze}"/>
+
+        <!-- Day of Transaction -->
+        <TextBlock Margin="4" Grid.Row="6" Grid.Column="0" Text="Day of Transaction:" VerticalAlignment="Center"/>
+        <TextBox Margin="4" Height="30" Grid.Row="6" Grid.Column="1" 
+             Text="{Binding DayOfTransaction, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Reminder -->
+        <TextBlock Margin="4" Grid.Row="7" Grid.Column="0" Text="Reminder:" VerticalAlignment="Top"/>
+        <CheckBox Margin="4" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1"
+              IsChecked="{Binding GiveReminder}"/>
+
+        <!-- Button -->
+        <Button x:Name="btnAddOutcome" Grid.Row="8" Grid.ColumnSpan="2" Click="btnAddOutcome_Click"
+            Content="Add Outcome" Height="30" Width="140"
+            Margin="4"
+            Command="{Binding AddOutcomeCommand}"/>
+    </Grid>
+
+</UserControl>

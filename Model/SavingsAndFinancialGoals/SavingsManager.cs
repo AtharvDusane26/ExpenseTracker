@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ExpenseTracker.Model.Services;
+using ExpenseTracker.Model.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpenseTracker.Model.SavingsAndFinancialGoals
 {
@@ -19,24 +19,38 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         {
             _user.AddToSavings(amount, category);
             Save();
+            AddNotification("Savings Added", $"Savings_{(_user as User).UserId}", NotificationType.Credited, $"Rs.{amount} added to savings in category '{category}'.");
         }
 
         internal void WithdrawFromSavings(double amount)
         {
             _user.WithdrawFromSavings(amount);
             Save();
+            AddNotification("Savings Withdrawn", $"Savings_{(_user as User).UserId}", NotificationType.Debited, $"Rs.{amount} withdrawn from savings.");
         }
 
         internal double GetSavingsBalance() => _user.SavingsBalance;
 
-        internal List<string> GetReminders(int daysBefore = 1)
+        internal List<INotification> GetReminders(int daysBefore = 1)
         {
             return _user.GetSavingsReminders(daysBefore);
         }
+
         internal List<ISaving> Get() => _user.Savings.ToList();
+
         private void Save()
         {
-            UserManager.Save(_user as User);
+            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
+            userManager.Save(_user as User);
+        }
+
+        private void AddNotification(string name, string referenceId, NotificationType type, string message)
+        {
+            var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            if (notificationManager != null)
+            {
+                notificationManager.AddNotification(name, referenceId, type, message, DateTime.Now);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,7 +17,8 @@ namespace ExpenseTracker.Model.Expenses
         {
             _user = user;
         }
-        internal void CreateExpense(string name, double amount, DateTime date, string description, string category = "General")
+
+        internal IExpense CreateExpense(string name, double amount, DateTime date, string description, bool freeze, string category = "General")
         {
             var id = $"{(_user as User)}_Expense_{_user.UserExpenses.Count + 1}";
             Expense expense = new Expense(id)
@@ -26,25 +29,39 @@ namespace ExpenseTracker.Model.Expenses
                 Description = description,
                 Category = category
             };
+
             _user.UserExpenses.Add(expense);
             (_user as User).Balance -= amount; // Deduct balance
+            expense.FreezeTransaction(freeze);
+
             Save();
+
+            AddNotification("Expense Added", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' of Rs.{amount} added in category '{category}'.");
+
+            return expense;
         }
 
-        internal void UpdateExpense(string id, string name, double amount, DateTime date, string description, string category = "General")
+        internal void UpdateExpense(string id, string name, double amount, DateTime date, string description, bool freeze, string category = "General")
         {
             var expense = _user.UserExpenses.FirstOrDefault(e => e.ExpenseId == id) as Expense;
             if (expense != null)
             {
-                (_user as User).Balance += expense.Amount; // rollback old amount
+                // Rollback old amount
+                (_user as User).Balance += expense.Amount;
+
                 expense.Name = name;
                 expense.Amount = amount;
                 expense.DateOfExpense = date;
                 expense.Description = description;
                 expense.Category = category;
-                (_user as User).Balance -= amount; // apply new amount
+
+                // Apply new amount
+                (_user as User).Balance -= amount;
+
+                Save();
+
+                AddNotification("Expense Updated", expense.ExpenseId, NotificationType.Other, $"Expense '{name}' updated with new amount Rs.{amount} in category '{category}'.");
             }
-            Save();
         }
 
         internal void DeleteExpense(string id)
@@ -52,16 +69,31 @@ namespace ExpenseTracker.Model.Expenses
             var expense = _user.UserExpenses.FirstOrDefault(e => e.ExpenseId == id);
             if (expense != null)
             {
-                (_user as User).Balance += expense.Amount; // refund balance
+                (_user as User).Balance += expense.Amount; // Refund balance
                 _user.UserExpenses.Remove(expense);
+
+                Save();
+
+                AddNotification("Expense Deleted", expense.ExpenseId, NotificationType.Credited, $"Expense '{expense.Name}' of Rs.{expense.Amount} deleted and amount refunded to balance.");
             }
-            Save();
         }
+
         private void Save()
         {
-            UserManager.Save(_user as User);
+            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
+            userManager.Save(_user as User);
+        }
+
+        private void AddNotification(string name, string referenceId, NotificationType type, string message)
+        {
+            var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            if (notificationManager != null)
+            {
+                notificationManager.AddNotification(name, referenceId, type, message, DateTime.Now);
+            }
         }
     }
+
 
 }
 

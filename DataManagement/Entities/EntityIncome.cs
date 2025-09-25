@@ -14,7 +14,7 @@ namespace ExpenseTracker.DataManagement.Entities
     {
         public EntityIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         [DataMember]
-        public DateTime DateOfIncome { get; set; }
+        public DateTime? DateOfCredited { get; set; }
         [DataMember]
         public string SourceOfIncome { get; set; }
         public override abstract ITransaction Get();
@@ -32,6 +32,7 @@ namespace ExpenseTracker.DataManagement.Entities
             income.UpdateTransactionDay(this.DayOfTransaction);
             income.GiveReminder = this.GiveReminder;
             income.FreezeTransaction(this.Freeze);
+            income.DateOfCredited = DateOfCredited;
             return income;
         }
         public override void Set(ITransaction value)
@@ -45,6 +46,7 @@ namespace ExpenseTracker.DataManagement.Entities
                 GiveReminder = income.GiveReminder;
                 Freeze = income.Freeze;
                 SourceOfIncome = income.SourceOfIncome.ToString();
+                DateOfCredited = income.DateOfCredited;
             }
         }
         [DataContract]
@@ -58,6 +60,7 @@ namespace ExpenseTracker.DataManagement.Entities
                 income.UpdateTransactionDay(this.DayOfTransaction);
                 income.GiveReminder = this.GiveReminder;
                 income.FreezeTransaction(this.Freeze);
+                income.DateOfCredited = DateOfCredited;
                 return income;
             }
             public override void Set(ITransaction value)
@@ -71,6 +74,7 @@ namespace ExpenseTracker.DataManagement.Entities
                     GiveReminder = income.GiveReminder;
                     Freeze = income.Freeze;
                     SourceOfIncome = income.SourceOfIncome.ToString();
+                    DateOfCredited = income.DateOfCredited;
                 }
             }
         }
@@ -78,8 +82,6 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntityYearlyIncome : EntityIncome
     {
-        [DataMember]
-        public DateTime DateOfIncome { get; set; }
         public EntityYearlyIncome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         public override  ITransaction Get()
         {
@@ -88,7 +90,7 @@ namespace ExpenseTracker.DataManagement.Entities
             income.UpdateTransactionDay(this.DayOfTransaction);
             income.GiveReminder = this.GiveReminder;
             income.FreezeTransaction(this.Freeze);
-            income.DateOfIncome = DateOfIncome;
+            income.DateOfCredited = DateOfCredited;
             return income;
         }
         public override void Set(ITransaction value)
@@ -101,8 +103,8 @@ namespace ExpenseTracker.DataManagement.Entities
                 DayOfTransaction = income.DayOfTransaction;
                 GiveReminder = income.GiveReminder;
                 Freeze = income.Freeze;
-                DateOfIncome = income.DateOfIncome;
                 SourceOfIncome = income.SourceOfIncome.ToString();
+                DateOfCredited = income.DateOfCredited;
             }
         }
     }

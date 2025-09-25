@@ -21,10 +21,12 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class HomeView : UserControl
     {
+        private HomeViewModel _viewModel;
         public HomeView()
         {
             InitializeComponent();
-            DataContext = new HomeViewModel();
+            DataContext = _viewModel = new HomeViewModel();
+            Loaded += (o, e) => _viewModel.OnTabChanged?.Invoke();
         }
     }
 }

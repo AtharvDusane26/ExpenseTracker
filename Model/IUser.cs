@@ -17,5 +17,6 @@ namespace ExpenseTracker.Model
         int Age { get; }
         double Balance { get; }
         void Create(string name, string phoneNumber, int age, double initialBalance);
+        void UpdateBalance(double amount);
     }
 }

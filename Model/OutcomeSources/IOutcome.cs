@@ -11,6 +11,7 @@ namespace ExpenseTracker.Model.OutcomeSources
     public interface IOutcome : ITransaction
     {
         OutcomeType OutComeType { get; }
+        DateTime? LastPaidDate { get; }
         void UpdateOutcomeType(OutcomeType outcomeType);
        
     }

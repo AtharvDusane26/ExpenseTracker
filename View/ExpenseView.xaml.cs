@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,36 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class ExpenseView : UserControl
     {
+        private ExpenseViewModel _component;
         public ExpenseView()
         {
             InitializeComponent();
+            DataContext = _component = new ExpenseViewModel();
+            Loaded += (o, e) => _component.OnTabChanged?.Invoke();
+        }
+
+        private void btnAddExpense_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ExpenseViewModel vm)
+            {
+                vm.AddExpense();
+            }
+        }
+
+        private void EditExpense_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ExpenseViewModel vm)
+            {
+                vm.EditExpense();
+            }
+        }
+
+        private void btnMarkFrozen_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ExpenseViewModel vm)
+            {
+                vm.ToggleFreezeSelected();
+            }
         }
     }
 }

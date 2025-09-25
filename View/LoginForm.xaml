@@ -43,7 +43,7 @@
 
                         <StackPanel Orientation="Horizontal" Margin="0 10">
                             <TextBlock Text="Name" FontWeight="Bold" Width="120" />
-                            <TextBox  Height="25" Width="220" Text="{Binding UserName}"/>
+                            <TextBox  Height="30" Width="220" Text="{Binding UserName}"/>
                         </StackPanel>
                       
                     </StackPanel>
@@ -78,35 +78,35 @@
                    FontWeight="Bold"
                    Foreground="#333"
                    HorizontalAlignment="Center"
-                   Margin="0 0 0 20"/>
+                   Margin="0 0 0 10"/>
 
                 <!-- User Info Card -->
                 <Border Grid.Row="1"
                 Background="White"
                 CornerRadius="10"
-                Padding="20"
+                Padding="10"
                 BorderBrush="#ddd"
                 BorderThickness="1"
                 >
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0 10">
                             <TextBlock Text="Name:" FontWeight="Bold" Width="120"/>
-                            <TextBox  Height="25" Width="220" Text="{Binding UserName}" />
+                            <TextBox  Height="30" Width="220" Text="{Binding UserName}" />
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0 10">
                             <TextBlock Text="Phone Number:" FontWeight="Bold" Width="120"/>
-                            <TextBox  Height="25" Width="220" Text="{Binding PhoneNumber}"/>
+                            <TextBox  Height="30" Width="220" Text="{Binding PhoneNumber}"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0 10">
                             <TextBlock Text="Age:" FontWeight="Bold" Width="120"/>
-                            <TextBox  Height="25" Width="220" Text="{Binding Age}" />
+                            <TextBox  Height="30" Width="220" Text="{Binding Age}" />
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0 10">
                             <TextBlock Text="Balance:" FontWeight="Bold" Width="120"/>
-                            <TextBox Height="25" Width="220" Text="{Binding InitialBalance, StringFormat=C}" Foreground="#28a745"/>
+                            <TextBox Height="30" Width="220" Text="{Binding InitialBalance, StringFormat=C}" Foreground="#28a745"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

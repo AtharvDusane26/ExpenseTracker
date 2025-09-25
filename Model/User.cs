@@ -7,10 +7,12 @@ using ExpenseTracker.Model.Expenses;
 using ExpenseTracker.Model.SavingsAndFinancialGoals;
 using ExpenseTracker.Model.Transactions;
 using System.Xml.Linq;
+using ExpenseTracker.Model.StaticData;
+using ExpenseTracker.Model.Notifications;
 
 namespace ExpenseTracker.Model
 {
-    public partial class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider,IIncomeProvider, IOutcomeProvider
+    public partial class User : IUser, ITransactionProvider, ISavingsProvider, IFinancialGoalsProvider, IExpenseProvider, IIncomeProvider, IOutcomeProvider, INotificationProvider
     {
         private string _userId;
         private string _name;
@@ -21,6 +23,7 @@ namespace ExpenseTracker.Model
         private List<IExpense> _userExpenses;
         private List<ISaving> _savings;
         private List<IFinancialGoal> _goals;
+        private readonly List<INotification> _notifications;
         public User(string userId)
         {
             _userId = userId;
@@ -28,6 +31,7 @@ namespace ExpenseTracker.Model
             _userExpenses = new List<IExpense>();
             _savings = new List<ISaving>();
             _goals = new List<IFinancialGoal>();
+            _notifications = new List<INotification>();
         }
 
         public string UserId
@@ -136,6 +140,13 @@ namespace ExpenseTracker.Model
                 return _savings;
             }
         }
+        public List<INotification> Notifications
+        {
+            get
+            {
+                return _notifications;
+            }
+        }
 
         public void Create(string name, string phoneNumber, int age, double initialBalance)
         {
@@ -156,7 +167,7 @@ namespace ExpenseTracker.Model
         {
             if (income == null) return;
             _transactions.Add(income);
-            Balance += income.Amount; // immediately increase balance
+            //  Balance += income.Amount; // immediately increase balance
         }
 
         public void DeleteIncome(string incomeName)
@@ -165,21 +176,20 @@ namespace ExpenseTracker.Model
             if (income != null)
             {
                 _transactions.Remove(income);
-                Balance -= income.Amount; // rollback balance
             }
         }
-
-        public void UpdateIncome(IIncome updatedIncome)
+        public void UpdateBalance(double amount)
         {
-            if (updatedIncome == null) return;
-
-            var existing = Incomes.FirstOrDefault(i => (i as ITransaction).Id == (updatedIncome as ITransaction).Id);
+            Balance += amount;
+        }
+        public void UpdateIncome(IIncome income)
+        {
+            var existing = Incomes.FirstOrDefault(i => (i as ITransaction).Id == (income as Income).Id);
             if (existing != null)
             {
                 _transactions.Remove(existing);
-                Balance -= existing.Amount; // rollback old amount
-                _transactions.Add(updatedIncome);
-                Balance += updatedIncome.Amount; // apply new amount
+                income.DateOfCredited = existing.DateOfCredited;
+                _transactions.Add(income);
             }
         }
         // ------------------- ITransactionProvider -------------------
@@ -216,6 +226,28 @@ namespace ExpenseTracker.Model
                 _transactions.Add(updatedOutcome);
             }
         }
+        // ------------------- INotificationProvider -------------------
+
+        // Add a new notification
+        public void AddNotification(INotification notification)
+        {
+            if (notification == null) throw new ArgumentNullException(nameof(notification));
+
+            _notifications.Add(notification);
+        }
+        // Delete a notification by reference object ID or Name
+        public void DeleteNotification(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return;
+
+            var toRemove = _notifications.FirstOrDefault(n =>
+            {
+                return n.Name == id || (n.ReferenceObjectId?.ToString() == id);
+            });
+
+            if (toRemove != null)
+                _notifications.Remove(toRemove);
+        }
         // ------------------- ISavingProvider -------------------
         public ISaving AddToSavings(double amount, string category = "General")
         {
@@ -223,7 +255,7 @@ namespace ExpenseTracker.Model
             {
                 Balance -= amount;
                 var id = Guid.NewGuid().ToString();
-                var saving = new Saving(id,amount, category);
+                var saving = new Saving(id, amount, category);
                 saving.UpdateDate(DateTime.Now);
                 _savings.Add(saving);
                 return saving;
@@ -263,17 +295,47 @@ namespace ExpenseTracker.Model
             return _savings;
         }
 
-        public List<string> GetSavingsReminders(int daysBefore = 1)
+        public List<INotification> GetSavingsReminders(int daysBefore = 1)
         {
-            var reminders = new List<string>();
-            if (SavingsBalance < 1000) // example threshold
-                reminders.Add($"Your total savings balance is low: {SavingsBalance}");
-            return reminders;
+            var notifications = new List<INotification>();
+            var notificationProvider = this as INotificationProvider;
+            if (notificationProvider == null)
+                return notifications;
+
+            // Example threshold check
+            if (SavingsBalance < 1000)
+            {
+                string referenceId = "SavingsBalance";
+                string message = $"Your total savings balance is low: Rs.{SavingsBalance}";
+
+                // Check if a similar notification already exists
+                var existingNotification = notificationProvider.Notifications
+                    .FirstOrDefault(n => n.ReferenceObjectId.ToString() == referenceId && n.Type == NotificationType.Warning);
+
+                if (existingNotification == null)
+                {
+                    var notification = new Notification(
+                        Guid.NewGuid().ToString(),
+                        "Low Savings Balance",
+                        referenceId,
+                        NotificationType.Warning,
+                        message,
+                        DateTime.Now
+                    );
+                    notificationProvider.AddNotification(notification);
+                    existingNotification = notification;
+                }
+
+                notifications.Add(existingNotification);
+            }
+
+            return notifications.OrderBy(n => n.Date).ToList();
         }
+
         public IFinancialGoal CreateGoal(string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
         {
             var id = Guid.NewGuid().ToString();
-            var goal = new FinancialGoal(id,name, targetAmount, durationInYears);
+            var goal = new FinancialGoal(id, name, targetAmount, durationInYears);
             goal.UpdateDate(DateTime.Now);
             _goals.Add(goal);
             return goal;

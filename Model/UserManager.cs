@@ -2,11 +2,13 @@
 using ExpenseTracker.Model.Expenses;
 using ExpenseTracker.Model.IncomeSources;
 using ExpenseTracker.Model.MonitoringAndReporting;
+using ExpenseTracker.Model.Notifications;
 using ExpenseTracker.Model.OutcomeSources;
 using ExpenseTracker.Model.SavingsAndFinancialGoals;
 using ExpenseTracker.Model.Services;
 using ExpenseTracker.Model.StaticData;
 using ExpenseTracker.Model.Transactions;
+using ExpenseTracker.ViewModel;
 using System;
 using System.Collections.Generic;
 
@@ -21,7 +23,7 @@ namespace ExpenseTracker.Model
         private FinancialGoalsManager _goalsManager;
         private ReportManager _reportManager;
         private UserMonitor _userMonitor;
-
+        private NotificationManager _notificationManager;
         public void SetUser(string name)
         {
             _user = GetUser(name) ?? throw new ArgumentNullException("user not found");
@@ -37,6 +39,9 @@ namespace ExpenseTracker.Model
             _goalsManager = new FinancialGoalsManager(_user);
             _reportManager = new ReportManager(_user);
             _userMonitor = new UserMonitor(_user);
+            var services = ServiceProvider.Instance;
+            _notificationManager = services.Resolve<NotificationManager>();
+            _notificationManager.Initialize(_user);
         }
         private User GetUser(string name)
         {
@@ -53,6 +58,36 @@ namespace ExpenseTracker.Model
             }
             return null;
         }
+        public void UpdateBalance(IIncome income, bool revertAndUpdate = false, double oldBalance = 0)
+        {
+            var userIncome = _user.GetIncome(income.Name);
+            if (userIncome != null)
+            {
+                var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
+                if (!userIncome.CheckForLastCredit(out string message))
+                {
+                    messageBox.Show(message, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Warning), "Warning");
+                    CreateNotification("Balance Update Failed", income.Id, NotificationType.Other, message);
+                    return;
+                }
+                var result = messageBox.Show($"Are you sure you want to add Rs.{userIncome.Amount} to your balance?", new MessageBoxArgs(MessageBoxButtons.YesNo, MessageBoxImage.Question), "Confirm Add to Balance");
+                if (result == MessageBoxResult.No)
+                    return;
+                if (revertAndUpdate)
+                {
+                    _user.Balance -= oldBalance;
+                    _user.Balance += userIncome.Amount;
+                }
+                else
+                {
+                    _user.Balance += userIncome.Amount;
+                }
+                userIncome.DateOfCredited = DateTime.Now;
+                Save(_user);
+                messageBox.Show("Balance Updated", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Balance Updated");
+                CreateNotification("Balance Updated", userIncome.Id, NotificationType.Credited, $"Rs.{userIncome.Amount} added to your balance.");
+            }
+        }
         // ---------------- CREATE NEW USER ----------------
         public User CreateUser(string name, string phoneNumber = "", int age = 0, double initialBalance = 0)
         {
@@ -63,52 +98,109 @@ namespace ExpenseTracker.Model
             return _user;
         }
         // ---------------- INCOME ----------------
-        public IIncome AddIncome(IncomeType type, string name, float amount, DateTime? date = null)
+        public IIncome AddIncome(IncomeType type, string name, double amount)
         {
-            return _transactionManager.CreateIncome(type, name, amount, date);
+            var income = _transactionManager.CreateIncome(type, name, amount);
+            CreateNotification(
+                $"Income Added: {name}",
+                income.Id,
+                NotificationType.Credited,
+                $"New income '{name}' of Rs.{amount} added."
+            );
+            return income;
         }
 
         public void DeleteIncome(string name)
         {
             _transactionManager.DeleteIncome(name);
         }
-        public void UpdateIncome(IIncome income)
+        public void UpdateIncome(string id, IncomeType type, string name, double amount, bool freeze, bool giveReminder, int tDay)
         {
-            _transactionManager.UpdateIncome(income);
+            _transactionManager.UpdateIncome(id, type, name, amount, freeze, giveReminder, tDay);
+            CreateNotification("Income Updated", id, NotificationType.Other, $"Income '{name}' updated.");
+
         }
         public List<IIncome> GetAllIncomes() => _transactionManager.GetAllIncomes();
 
         // ---------------- OUTCOME ----------------
-        public IOutcome AddOutcome(string name, float amount, OutcomeType outcomeType, int dayOfTransaction)
+        public IOutcome AddOutcome(string name, double amount, OutcomeType outcomeType, int dayOfTransaction)
         {
-            return _transactionManager.CreateOutcome(name, amount, outcomeType, dayOfTransaction);
+            var outcome = _transactionManager.CreateOutcome(name, amount, outcomeType, dayOfTransaction);
+            CreateNotification("Outcome Added", outcome.Id, NotificationType.Debited, $"New outcome '{name}' of Rs.{amount} created.");
+            return outcome;
         }
 
         public void DeleteOutcome(string name)
         {
             _transactionManager.DeleteOutcome(name);
         }
-        public void UpdateOutcome(IOutcome outcome)
+        public void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder)
         {
-            _transactionManager.UpdateOutcome(outcome);
+            _transactionManager.UpdateOutcome(id, name, amount, outcomeType, dayOfTransaction, freeze, giveReminder);
+            CreateNotification("Outcome Updated", id, NotificationType.Other, $"Outcome '{name}' updated.");
+
         }
         public List<IOutcome> GetAllOutcomes()
         {
             return _transactionManager.GetAllOutcomes();
         }
+        public bool CheckPaidOutcome(IOutcome outcome, out string errorMessage)
+        {
+            errorMessage = "";
+            if (outcome.Amount > _user.Balance)
+            {
+                errorMessage = "Insufficient balance to pay this outcome.";
+                return false;
+            }
+            switch (outcome.OutComeType)
+            {
+                case Model.StaticData.OutcomeType.Daily:
+                    if (outcome.LastPaidDate?.Day == DateTime.Today.Day)
+                    {
+                        errorMessage = "Amount is already paid for the day";
+                        return false;
+                    }
+                    return true;
+                case Model.StaticData.OutcomeType.Monthly:
+                    if (outcome.LastPaidDate?.Month == DateTime.Today.Month)
+                    {
+                        errorMessage = "Amount is already paid for this month";
+                        return false;
+                    }
+                    return true;
+                case Model.StaticData.OutcomeType.Yearly:
+                    if (outcome.LastPaidDate?.Year == DateTime.Today.Year)
+                    {
+                        errorMessage = "Amount is already paid for this year";
+                        return false;
+                    }
+                    return true;
+            }
+            return true;
+        }
+        public bool CreateOutcomeAsExpense(string outcomeId)
+        {           
+            return _transactionManager.CreateOutcomeAsExpense(outcomeId);
+        }
 
         // ---------------- EXPENSE ----------------
-        public void AddExpense(string name, double amount, DateTime date, string description, string category = "General")
-            => _expenseManager.CreateExpense(name, amount, date, description, category);
-
-        public void UpdateExpense(string id, string name, double amount, DateTime date, string description, string category = "General")
+        public IExpense AddExpense(string name, double amount, DateTime date, string description, bool freeze, string category = "General")
         {
-            _expenseManager.UpdateExpense(id, name, amount, date, description, category);
+            var expense = _expenseManager.CreateExpense(name, amount, date, description, freeze, category);
+            CreateNotification("Expense Added", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' of Rs.{amount} added in category '{category}'.");
+            return expense;
+        }
+
+        public void UpdateExpense(string id, string name, double amount, DateTime date, string description, bool freeze, string category = "General")
+        {
+            _expenseManager.UpdateExpense(id, name, amount, date, description, freeze, category);
+            CreateNotification("Expense Updated", id, NotificationType.Other, $"Expense '{name}' updated.");
         }
 
         public void DeleteExpense(string id)
         {
             _expenseManager.DeleteExpense(id);
+
         }
         public List<IExpense> GetAllExpenses()
         {
@@ -121,7 +213,7 @@ namespace ExpenseTracker.Model
         }
         public List<ISaving> GetAllSavings()
         {
-             return _savingsManager.Get();
+            return _savingsManager.Get();
         }
         public void WithdrawFromSavings(double amount)
         {
@@ -132,7 +224,7 @@ namespace ExpenseTracker.Model
             return _savingsManager.GetSavingsBalance();
         }
 
-        public List<string> GetSavingsReminders(int daysBefore = 1)
+        public List<INotification> GetSavingsReminders(int daysBefore = 1)
         {
             return _savingsManager.GetReminders(daysBefore);
         }
@@ -162,23 +254,23 @@ namespace ExpenseTracker.Model
         }
 
         // ---------------- REMINDERS ----------------
-        public List<string> GetReminders(int daysBefore = 3)
+        public List<INotification> GetReminders(int daysBefore = 3)
         {
             return _transactionManager.GetUpcomingReminders(daysBefore);
         }
 
         // ---------------- PROCESS DUE OUTCOMES ----------------
-        public void ProcessDueOutcomes()
-        {
-            _transactionManager.CreateDueOutcomesAsExpense();
-        }
+        //public void ProcessDueOutcomes()
+        //{
+        //    _transactionManager.CreateDueOutcomesAsExpense();
+        //}
 
         // ---------------- BALANCE ----------------
         public double GetBalance()
         {
             return _user.Balance;
         }
-        internal static void Save(User user)
+        internal void Save(User user)
         {
             var services = ServiceProvider.Instance;
             var serializableBase = services.Resolve<SerializableBase>();
@@ -190,5 +282,10 @@ namespace ExpenseTracker.Model
             users.Add(user);
             serializableBase.Set(users);
         }
+        private void CreateNotification(string name, string referenceObject, NotificationType type, string message)
+        {
+            _notificationManager.AddNotification(name, referenceObject, type, message,DateTime.Now);
+        }
     }
+
 }

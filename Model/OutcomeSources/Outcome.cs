@@ -11,8 +11,6 @@ namespace ExpenseTracker.Model.OutcomeSources
     public class Outcome : Transaction, IOutcome
     {
         private OutcomeType _outcomeType;
-        public DateTime? LastPaidDate { get; set; } // Optional, track last payment
-
         public Outcome(string name, double amount, OutcomeType outcomeType)
             : base(name, amount)
         {
@@ -20,7 +18,7 @@ namespace ExpenseTracker.Model.OutcomeSources
         }
 
         public OutcomeType OutComeType => _outcomeType;
-
+        public DateTime? LastPaidDate { get; internal set; }
         public void UpdateOutcomeType(OutcomeType outcomeType) => _outcomeType = outcomeType;
 
         public override string Remind()

@@ -7,18 +7,45 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="10">
-        <StackPanel>
-            <TextBlock Text="💸 Outcome" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
 
-            <DataGrid ItemsSource="{Binding Outcomes}" AutoGenerateColumns="False" CanUserAddRows="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" />
-                    <DataGridTextColumn Header="Type" Binding="{Binding OutComeType}" />
-                    <DataGridTextColumn Header="Day" Binding="{Binding DayOfTransaction}" />
-                    <DataGridCheckBoxColumn Header="Freeze" Binding="{Binding Freeze}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
+        <!-- Header + Add Button -->
+        <Grid>
+            <TextBlock Text="💸 Outcome" FontSize="20" HorizontalAlignment="Left" FontWeight="Bold" Margin="0,0,0,10"/>
+            <Button x:Name="btnAddOutcome" Content="Add Outcome" HorizontalAlignment="Right" Height="30" Width="140" Click="btnAddOutcome_Click"/>
+        </Grid>
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="1" IsReadOnly="True"
+              ItemsSource="{Binding Outcomes}"
+              SelectedItem="{Binding SelectedOutcome}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn MinWidth="100" Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn MinWidth="100" Header="Amount" Binding="{Binding Amount}" />
+                <DataGridTextColumn Header="Type" Binding="{Binding OutcomeType}" />
+                <DataGridTextColumn MinWidth="100" Header="Day" Binding="{Binding DayOfTransaction}" />
+
+                <DataGridTemplateColumn MinWidth="120" Header="">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button x:Name="btnDeductFromBalance" Content="Add as Expense" Click="btnDeductFromBalance_Click"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+            <!-- Context Menu -->
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit" Click="EditOutcome_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
     </Grid>
+
 </UserControl>

@@ -27,6 +27,8 @@ namespace ExpenseTracker.DataManagement.Entities
         public List<EntityFinancialGoal> Goals { get; set; }
         [DataMember]
         public List<EntitySaving> Savings { get; set; }
+        [DataMember]
+        public List<EntityNotification> Notifications { get; set; }
 
         public User Get()
         {
@@ -61,6 +63,13 @@ namespace ExpenseTracker.DataManagement.Entities
                 foreach (var entitySaving in Savings)
                 {
                     user.Savings.Add(entitySaving.Get());
+                }
+            }
+            if (Notifications != null)
+            {
+                foreach (var entityNotification in Notifications)
+                {
+                    user.Notifications.Add(entityNotification.Get());
                 }
             }
             return user;
@@ -132,8 +141,16 @@ namespace ExpenseTracker.DataManagement.Entities
                     this.Savings.Add(entitySaving);
                 }
             }
-
+            if (value.Notifications != null)
+            {
+                this.Notifications = new List<EntityNotification>();
+                foreach (var notification in value.Notifications)
+                {
+                    var entityNotification = new EntityNotification(notification.Id, this.Id);
+                    entityNotification.Set(notification);
+                    this.Notifications.Add(entityNotification);
+                }
+            }
         }
-
     }
 }

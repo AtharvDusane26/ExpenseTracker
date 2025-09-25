@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.Model.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,6 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         ISaving AddToSavings(double amount, string category = "General");
         void WithdrawFromSavings(double amount, string category = null);
         List<ISaving> GetAllSavings();
-        List<string> GetSavingsReminders(int daysBefore = 1);
+        List<INotification> GetSavingsReminders(int daysBefore = 1);
     }
 }

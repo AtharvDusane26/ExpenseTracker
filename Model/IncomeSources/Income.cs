@@ -11,7 +11,7 @@ namespace ExpenseTracker.Model.IncomeSources
     public abstract class Income : Transaction, IIncome
     {
         private SourceOfIncome _source;
-        public DateTime DateOfIncome { get; set; }
+        public DateTime? DateOfCredited { get; set; } = null;
 
         public Income(string name, double amount, SourceOfIncome source = SourceOfIncome.Salary)
             : base(name, amount)
@@ -22,5 +22,7 @@ namespace ExpenseTracker.Model.IncomeSources
         public SourceOfIncome SourceOfIncome => _source;
 
         public void UpdateSourceOfIncome(SourceOfIncome source) => _source = source;
+       public abstract bool CheckForLastCredit(out string message);
+
     }
 }

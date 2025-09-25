@@ -30,8 +30,8 @@ namespace ExpenseTracker.View
         {
             Title = "Expense Tracker | Login Form",
             ResizeMode = ViewResizeMode.NoResize,
-            StartupLocation = ViewStartupLocation.CenterOwner,
-            ShowInTaskbar = false,
+            StartupLocation = ViewStartupLocation.CenterScreen,
+            ShowInTaskbar = true,
             WindowState = ViewState.Normal,
             IsModal = true
         };
@@ -54,9 +54,9 @@ namespace ExpenseTracker.View
                 window.Close();
             }
         }
-        public void SetComponent(object component)
-        {
-           _component = component as LoginViewModel;
-        }
+            public void SetComponent(object component)
+            {
+               _component = component as LoginViewModel;
+            }
     }
 }

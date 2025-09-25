@@ -10,14 +10,79 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.ViewModel
 {
-    public class ExpensesViewModel
+    public class ExpenseViewModel : ExpenseTrackerViewModelBase
     {
-        public ObservableCollection<IExpense> Expenses { get; set; }
+        private ObservableCollection<IExpense> _expenses;
+        private IExpense _selectedExpense;
 
-        public ExpensesViewModel()
+        public ExpenseViewModel()
+        {
+            Init();
+        }
+
+        protected void Init()
         {
             var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            Expenses = new ObservableCollection<IExpense>(userManager.GetAllExpenses());
+            Expenses = new ObservableCollection<IExpense>(userManager.GetAllExpenses().Where(o => o.DateOfExpense.Month == DateTime.Now.Month));
+        }
+
+        public ObservableCollection<IExpense> Expenses
+        {
+            get => _expenses;
+            set
+            {
+                if (_expenses != value)
+                {
+                    _expenses = value;
+                    OnPropertyChanged(nameof(Expenses));
+                }
+            }
+        }
+
+        public IExpense SelectedExpense
+        {
+            get => _selectedExpense;
+            set
+            {
+                if (_selectedExpense != value)
+                {
+                    _selectedExpense = value;
+                    OnPropertyChanged(nameof(SelectedExpense));
+                }
+            }
+        }
+
+        protected override void Refresh()
+        {
+            Init();
+            base.Refresh();
+        }
+
+        public void AddExpense()
+        {
+            var vm = new ExpenseEntryViewModel();
+            var sv = ServiceProvider.Instance.Resolve<IViewService>();
+            sv.ShowDialog(vm);
+            Refresh();
+        }
+
+        public void EditExpense()
+        {
+            if (SelectedExpense == null) return;
+            var vm = new ExpenseEntryViewModel();
+            vm.Fill(SelectedExpense);
+            var sv = ServiceProvider.Instance.Resolve<IViewService>();
+            sv.ShowDialog(vm);
+            Refresh();
+        }
+
+        public void ToggleFreezeSelected()
+        {
+            if (SelectedExpense != null)
+            {
+                SelectedExpense.FreezeTransaction(!SelectedExpense.Freeze);
+                Refresh();
+            }
         }
     }
 }

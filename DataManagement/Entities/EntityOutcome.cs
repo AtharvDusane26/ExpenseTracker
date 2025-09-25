@@ -16,6 +16,9 @@ namespace ExpenseTracker.DataManagement.Entities
     {
         [DataMember]
         public string OutComeType { get; set; }
+        [DataMember]
+        public DateTime? LastPaidDate { get; set; }
+
         public EntityOutcome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         public override ITransaction Get()
         {
@@ -24,19 +27,21 @@ namespace ExpenseTracker.DataManagement.Entities
             outcome.UpdateTransactionDay(this.DayOfTransaction);
             outcome.GiveReminder = this.GiveReminder;
             outcome.FreezeTransaction(this.Freeze);
+            outcome.LastPaidDate = LastPaidDate;
             return outcome;
         }
         public override void Set(ITransaction value)
         {
-            var income = value as Outcome;
-            if (income != null)
+            var outcome = value as Outcome;
+            if (outcome != null)
             {
-                Name = income.Name;
-                Amount = income.Amount;
-                DayOfTransaction = income.DayOfTransaction;
-                GiveReminder = income.GiveReminder;
-                Freeze = income.Freeze;
-                OutComeType = income.OutComeType.ToString();
+                Name = outcome.Name;
+                Amount = outcome.Amount;
+                DayOfTransaction = outcome.DayOfTransaction;
+                GiveReminder = outcome.GiveReminder;
+                Freeze = outcome.Freeze;
+                LastPaidDate = outcome.LastPaidDate;
+                OutComeType = outcome.OutComeType.ToString();
             }
         }
     }

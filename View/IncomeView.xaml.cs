@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Services;
+using ExpenseTracker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +23,30 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class IncomeView : UserControl
     {
+        private IncomeViewModel _component;
         public IncomeView()
         {
             InitializeComponent();
-            DataContext = new ViewModel.IncomeViewModel();
+            DataContext = _component = new IncomeViewModel();
+        }
+
+        private void btnAddIncome_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = new IncomeEntryViewModel();
+            var sv = ServiceProvider.Instance.Resolve<IViewService>();
+            sv.ShowDialog(vm);
+            _component.OnTabChanged?.Invoke();
+        }
+
+        private void btnAddToBalance_Click(object sender, RoutedEventArgs e)
+        {
+
+            _component.AddIncome();
+        }
+
+        private void EditIncome_Click(object sender, RoutedEventArgs e)
+        {
+            _component.EditIncome();
         }
     }
 }

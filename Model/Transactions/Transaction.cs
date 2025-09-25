@@ -72,6 +72,10 @@ namespace ExpenseTracker.Model.Transactions
         {
             _freeze = status;
         }
+        public virtual void SetReminder(bool reminder)
+        {
+            GiveReminder = reminder;
+        }
         public virtual void Create(string id)
         {
             _id = id;

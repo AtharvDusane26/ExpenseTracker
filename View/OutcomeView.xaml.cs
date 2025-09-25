@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExpenseTracker.Model.Services;
+using ExpenseTracker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,12 +20,32 @@ namespace ExpenseTracker.View
     /// <summary>
     /// Interaction logic for OutcomeView.xaml
     /// </summary>
-    public partial class OutcomeView : UserControl
+    public partial class OutcomeView : UserControl 
     {
+        private OutcomeViewModel _component;
+
         public OutcomeView()
         {
             InitializeComponent();
-            DataContext = new ViewModel.OutcomeViewModel();
+            DataContext = _component= new ViewModel.OutcomeViewModel();
+        }
+
+        private void btnAddOutcome_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = new OutcomeEntryViewModel();
+            var sv = ServiceProvider.Instance.Resolve<IViewService>();
+            sv.ShowDialog(vm);
+            _component.OnTabChanged?.Invoke();
+        }
+
+        private void btnDeductFromBalance_Click(object sender, RoutedEventArgs e)
+        {
+            _component.AddOutcome();
+        }
+
+        private void EditOutcome_Click(object sender, RoutedEventArgs e)
+        {
+            _component.EditOutcome();
         }
     }
 }
