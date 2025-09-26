@@ -38,7 +38,7 @@ namespace ExpenseTracker.Model.Transactions
             Save();
 
             // Notification
-            AddNotification(name, id, NotificationType.Credited, $"Income '{name}' of Rs.{amount} added.");
+            AddNotification(name, id, NotificationType.Income, $"Income '{name}' of Rs.{amount} added.");
 
             return income;
         }
@@ -86,7 +86,7 @@ namespace ExpenseTracker.Model.Transactions
             Save();
 
             // Notification
-            AddNotification(name, outcome.Id, NotificationType.Debited, $"Outcome '{name}' of Rs.{amount} added.");
+            AddNotification(name, outcome.Id, NotificationType.Outcome, $"Outcome '{name}' of Rs.{amount} added.");
 
             return outcome;
         }

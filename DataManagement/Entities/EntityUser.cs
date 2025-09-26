@@ -29,6 +29,7 @@ namespace ExpenseTracker.DataManagement.Entities
         public List<EntitySaving> Savings { get; set; }
         [DataMember]
         public List<EntityNotification> Notifications { get; set; }
+        [DataMember]
         public List<EntityTransactionHistory> TransactionHistory { get; set; }
 
         public User Get()

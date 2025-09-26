@@ -60,7 +60,7 @@ namespace ExpenseTracker.Model.Expenses
 
                 Save();
 
-                AddNotification("Expense Updated", expense.ExpenseId, NotificationType.Other, $"Expense '{name}' updated with new amount Rs.{amount} in category '{category}'.");
+                AddNotification("Expense Updated", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' updated with new amount Rs.{amount} in category '{category}'.");
             }
         }
 

@@ -29,9 +29,8 @@
 
             <!-- Category -->
             <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Category:" VerticalAlignment="Center"/>
-            <ComboBox Margin="4" Height="30" Grid.Row="2" Grid.Column="1"
-                  ItemsSource="{Binding CategoryOptions}"
-                  SelectedItem="{Binding Category}"/>
+            <TextBox Margin="4" Height="30" Grid.Row="2" Grid.Column="1"
+                  Text="{Binding Category}"/>
 
             <!-- Freeze -->
             <TextBlock Margin="4" Grid.Row="3" Grid.Column="0" Text="Freeze:" VerticalAlignment="Center"/>

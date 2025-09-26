@@ -68,12 +68,13 @@ namespace ExpenseTracker.Model
                 if (!userIncome.CheckForLastCredit(out string message))
                 {
                     messageBox.Show(message, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Warning), "Warning");
-                   // CreateNotification("Balance Update Failed", income.Id, NotificationType.Other, message);
+                    CreateNotification("Balance Update Failed", income.Id, NotificationType.Other, message);
                     return;
                 }
                 var result = messageBox.Show($"Are you sure you want to add Rs.{userIncome.Amount} to your balance?", new MessageBoxArgs(MessageBoxButtons.YesNo, MessageBoxImage.Question), "Confirm Add to Balance");
                 if (result == MessageBoxResult.No)
                     return;
+                var lastBalance = _user.Balance;
                 if (revertAndUpdate)
                 {
                     _user.Balance -= oldBalance;
@@ -86,10 +87,14 @@ namespace ExpenseTracker.Model
                 userIncome.DateOfCredited = DateTime.Now;
                 Save(_user);
                 messageBox.Show("Balance Updated", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Balance Updated");
-               // CreateNotification("Balance Updated", userIncome.Id, NotificationType.Credited, $"Rs.{userIncome.Amount} added to your balance.");
+                CreateNotification("Balance Updated", userIncome.Id, NotificationType.Credited, $"Rs.{userIncome.Amount} added to your balance. Previous balance - {lastBalance}");
             }
         }
         // ---------------- CREATE NEW USER ----------------
+        private void CreateNotification(string name, string referenceObjectId, NotificationType type, string message)
+        {
+            _notificationManager.AddNotification(name, referenceObjectId, type, message,DateTime.Now);
+        }
         public User CreateUser(string name, string phoneNumber = "", int age = 0, double initialBalance = 0)
         {
             _user = new User(Guid.NewGuid().ToString());
@@ -340,7 +345,6 @@ namespace ExpenseTracker.Model
             if (readNf == null || readNf.Count == 0) return;
             foreach (var item in readNf)
             {
-                _user.AddToHistory(item.Message);
                 nm.DeleteNotification(item.Id);
             }
         }

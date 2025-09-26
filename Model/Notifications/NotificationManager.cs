@@ -53,7 +53,10 @@ namespace ExpenseTracker.Model.Notifications
         public void MarkAsRead(string id)
         {
             var notification = _provider.Notifications.FirstOrDefault(n => n.Id == id);
-            notification?.MarkAsRead();
+            if (notification == null) return;
+            notification.MarkAsRead();
+            if (notification.Type == NotificationType.Debited || notification.Type == NotificationType.Credited)
+                (_provider as User)?.AddToHistory(notification.Message);
             Save();
         }
         public void MarkAsUnRead(string id)
