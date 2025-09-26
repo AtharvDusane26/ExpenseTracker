@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.Model.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,8 +63,20 @@ namespace ExpenseTracker.Model.MonitoringAndReporting
             // TODO: Use iTextSharp, EPPlus, etc. for PDF/Excel export
             throw new NotImplementedException("Export functionality not implemented yet.");
         }
+        public string GetTransactionHistory(int month)
+        {
+            var mb = ServiceProvider.Instance.Resolve<IMessageBoxService>();
+            var tHistory = (_user as User).TransactionHistory.Where(t => t.Date.Month == month).FirstOrDefault();
+            if (tHistory == null)
+            {
+                mb.Show("No transaction history found for the specified month.",new MessageBoxArgs(MessageBoxButtons.OK,MessageBoxImage.Error), "Expense Tracker"); return "";
+            }
+            else
+            {
+                return tHistory.ToString();
+            }
+        }
+       
     }
-
- 
 
 }

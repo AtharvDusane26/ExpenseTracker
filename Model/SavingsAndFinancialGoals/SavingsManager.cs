@@ -15,9 +15,9 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
             _user = user;
         }
 
-        internal void AddToSavings(double amount, string category = "General")
+        internal void AddToSavings(double amount,DateTime date, string category = "General")
         {
-            _user.AddToSavings(amount, category);
+            _user.AddToSavings(amount, date,category);
             Save();
             AddNotification("Savings Added", $"Savings_{(_user as User).UserId}", NotificationType.Credited, $"Rs.{amount} added to savings in category '{category}'.");
         }

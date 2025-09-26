@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,36 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class FinancialGoalsView : UserControl
     {
+        private FinancialGoalsViewModel _component;
         public FinancialGoalsView()
         {
             InitializeComponent();
+            DataContext = _component = new FinancialGoalsViewModel();
+        }
+
+        private void btnCreateGoal_Click(object sender, RoutedEventArgs e)
+        {
+            _component.AddGoal();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _component.AddAmountToGoal();
+        }
+
+        private void DeleteGoal_Click(object sender, RoutedEventArgs e)
+        {
+            _component.DeleteGoal();
+        }
+
+        private void EditGoal_Click(object sender, RoutedEventArgs e)
+        {
+            _component.EditGoal();
+        }
+
+        private void StopGoal_Click(object sender, RoutedEventArgs e)
+        {
+            _component.StopGoal();
         }
     }
 }

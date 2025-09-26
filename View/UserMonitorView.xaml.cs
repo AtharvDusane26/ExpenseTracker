@@ -20,10 +20,12 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class UserMonitorView : UserControl
     {
+        private ViewModel.UserMonitorViewModel _component;
         public UserMonitorView()
         {
             InitializeComponent();
-            DataContext = new ViewModel.UserMonitorViewModel();
+            DataContext = _component = new ViewModel.UserMonitorViewModel();
+            Loaded += (o, e) => _component.LoadInsights();
         }
     }
 }

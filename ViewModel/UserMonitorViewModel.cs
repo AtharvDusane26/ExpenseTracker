@@ -27,7 +27,7 @@ namespace ExpenseTracker.ViewModel
             LoadInsights();
         }
 
-        private void LoadInsights()
+        public void LoadInsights()
         {
             ExpenseInsights.Clear();
             foreach (var insight in _monitor.MonitorExpenses())

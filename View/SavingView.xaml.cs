@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpenseTracker.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +21,22 @@ namespace ExpenseTracker.View
     /// </summary>
     public partial class SavingView : UserControl
     {
+        private SavingsViewModel _component;
         public SavingView()
         {
             InitializeComponent();
-            DataContext = new ViewModel.SavingsViewModel();
+            DataContext = _component = new SavingsViewModel();
+            Loaded += (o,e) => _component.OnTabChanged?.Invoke();
+        }
+
+        private void EditSaving_Click(object sender, RoutedEventArgs e)
+        {
+            _component.EditSaving();
+        }
+
+        private void btnAddSaving_Click(object sender, RoutedEventArgs e)
+        {
+            _component.AddSaving();
         }
     }
 }

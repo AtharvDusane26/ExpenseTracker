@@ -4,13 +4,97 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ExpenseTracker.View"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="10">
-        <StackPanel>
-            <TextBlock Text="📊 Reports" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
-            <TextBlock Text="Graphical reports will be shown here" FontStyle="Italic"/>
-            <!-- Placeholder for future charts -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10" Background="#F5F5F5" >
+
+            <!-- Header -->
+            <TextBlock Text="📊 Financial Report" FontSize="26" FontWeight="Bold" 
+                   Margin="0,0,0,15" Foreground="{StaticResource PrimaryBrush}" />
+
+            <!-- Month/Year Selection -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,20" VerticalAlignment="Center">
+                <TextBlock Text="Month:" VerticalAlignment="Center" FontWeight="Bold"/>
+                <ComboBox Width="140" 
+                      ItemsSource="{Binding Months}" 
+                      SelectedIndex="{Binding SelectedMonthIndex, Mode=TwoWay}" />
+                <TextBlock Text="Year:" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox Width="80" Text="{Binding SelectedYear, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Content="Download Transaction Report" Margin="5"   Height="30" Width="250" Click="Button_Click"  ToolTip="Get Transacrion History For Selected Month"             
+                    FontWeight="Bold"/>
+            </StackPanel>
+
+            <!-- Monthly Summary Card -->
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,15" 
+                BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" >
+                <StackPanel>
+                    <TextBlock Text="Monthly Summary" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding MonthlySummary}" TextWrapping="Wrap" FontSize="14"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Expense Breakdown Card -->
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,15"
+                BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Expense Breakdown by Category" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                    <DataGrid ItemsSource="{Binding ExpenseBreakdown}" AutoGenerateColumns="False" 
+                          CanUserAddRows="False" IsReadOnly="True"
+                          RowBackground="White" AlternatingRowBackground="#F0F8FF" 
+                          GridLinesVisibility="None" HeadersVisibility="Column" 
+                          BorderThickness="0" Height="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Key}" />
+                            <DataGridTextColumn Header="Amount" Binding="{Binding Value, StringFormat=Rs.{0:N2}}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Yearly Expense Trend Card -->
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,15"
+                BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Yearly Expense Trend (Monthly)" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                    <DataGrid ItemsSource="{Binding YearlyExpenseTrend}" AutoGenerateColumns="False" 
+                          CanUserAddRows="False" IsReadOnly="True"
+                          RowBackground="White" AlternatingRowBackground="#F0F8FF" 
+                          GridLinesVisibility="None" HeadersVisibility="Column" 
+                          BorderThickness="0" Height="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Month" Binding="{Binding Key}" />
+                            <DataGridTextColumn Header="Expenses" Binding="{Binding Value, StringFormat=Rs.{0:N2}}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Goal Progress Card -->
+            <Border Background="White" CornerRadius="8" Padding="10" Margin="0,0,0,20"
+                BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Financial Goal Progress (%)" FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                    <DataGrid ItemsSource="{Binding GoalProgress}" AutoGenerateColumns="False" 
+                          CanUserAddRows="False" IsReadOnly="True"
+                          RowBackground="White" AlternatingRowBackground="#F0F8FF" 
+                          GridLinesVisibility="None" HeadersVisibility="Column" 
+                          BorderThickness="0" Height="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Goal" Binding="{Binding Key}" />
+                            <DataGridTextColumn Header="Progress" Binding="{Binding Value, StringFormat=Rs.{0:N2}}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Optional Export Button -->
+            <Button Content="Export Report" Width="150" HorizontalAlignment="Left" 
+                Margin="0,0,0,20"
+                FontWeight="Bold" Padding="8,4" Click="ExportReport_Click"/>
+
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
+
 </UserControl>

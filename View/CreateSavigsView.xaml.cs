@@ -18,18 +18,18 @@ using System.Windows.Shapes;
 namespace ExpenseTracker.View
 {
     /// <summary>
-    /// Interaction logic for CreateExpenseEntryView.xaml
+    /// Interaction logic for CreateSavigsView.xaml
     /// </summary>
-    public partial class CreateExpenseEntryView : UserControl,IDynamicView
+    public partial class CreateSavigsView : UserControl,IDynamicView
     {
-        private ExpenseEntryViewModel _component;
-        public CreateExpenseEntryView()
+        private SavingEntryViewModel _component;
+        public CreateSavigsView()
         {
             InitializeComponent();
         }
         public ViewCreatingArgs ViewCreatingArgs { get; } = new ViewCreatingArgs
         {
-            Title = "Expense Tracker | Add Expense",
+            Title = "Expense Tracker | Add Savings",
             ResizeMode = ViewResizeMode.NoResize,
             StartupLocation = ViewStartupLocation.CenterOwner,
             ShowInTaskbar = false,
@@ -38,18 +38,12 @@ namespace ExpenseTracker.View
         };
         public void SetComponent(object component)
         {
-            _component = component as ExpenseEntryViewModel;
-        }     
-        private void btnAddExpense_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is ExpenseEntryViewModel vm)
-            {
-                vm.Save();
+            _component = component as SavingEntryViewModel;
+        }
 
-                // close dialog via IViewService in your app
-                var viewService = ExpenseTracker.Model.Services.ServiceProvider.Instance.Resolve<IViewService>();
-                viewService.Close(this);
-            }
+        private void btnAddSaving_Click(object sender, RoutedEventArgs e)
+        {
+            _component.Save();
         }
     }
 }

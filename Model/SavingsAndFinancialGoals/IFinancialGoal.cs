@@ -11,9 +11,17 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         string GoalId { get; }
         string Name { get; }
         double TargetAmount { get; }
+        double CollectedAmount { get; }
         int DurationInMonths { get; }
         double MonthlyContribution { get; }
+        double MonthlyInterestRate { get; }
         DateTime StartDate { get; }
-        void UpdateDate(DateTime date);
+        bool Running { get; }
+        DateTime EndDate { get; }
+        DateTime DateOfLastContribution { get; }
+        void AddAmount();
+
+        void Start(DateTime date);
+        void Stop();
     }
 }

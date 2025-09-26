@@ -5,69 +5,65 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ExpenseTracker.View"
              mc:Ignorable="d" Background="WhiteSmoke"
-            Height="400" Width="500"> 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+            Height="400" Width="500">
+    <GroupBox Header="Add Income" Padding="10" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Name -->
-        <TextBlock Margin="4" Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center"/>
-        <TextBox Margin="4" Grid.Row="0" Height="30" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <!-- Name -->
+            <TextBlock Margin="4" Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center"/>
+            <TextBox Margin="4" Grid.Row="0" Height="30" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!-- Amount -->
-        <TextBlock Margin="4" Grid.Row="1" Grid.Column="0" Text="Amount:" VerticalAlignment="Center"/>
-        <TextBox Margin="4"  Height="30" Grid.Row="1" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
+            <!-- Amount -->
+            <TextBlock Margin="4" Grid.Row="1" Grid.Column="0" Text="Amount:" VerticalAlignment="Center"/>
+            <TextBox Margin="4"  Height="30" Grid.Row="1" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!-- Source Of Income -->
-        <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Source:" VerticalAlignment="Center"/>
-        <ComboBox Margin="4"  Height="30" Grid.Row="2" Grid.Column="1"
+            <!-- Source Of Income -->
+            <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Source:" VerticalAlignment="Center"/>
+            <ComboBox Margin="4"  Height="30" Grid.Row="2" Grid.Column="1"
                   ItemsSource="{Binding SourceOfIncomeOptions}"
                   SelectedItem="{Binding SourceOfIncome}"/>
 
-        <!-- Date Of Income -->
-        <TextBlock Visibility="Collapsed" Margin="4" Grid.Row="3" Grid.Column="0" Text="Date:" VerticalAlignment="Center"/>
-        <DatePicker  Visibility="Collapsed" Margin="4"  Height="30" Grid.Row="3" Grid.Column="1"
-                    SelectedDate="{Binding DateOfIncome}"/>
-
-        <!-- Income Type -->
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="Income Type:" VerticalAlignment="Center"/>
-        <ComboBox Grid.Row="4"  Height="30" Grid.Column="1"
+            <!-- Income Type -->
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Income Type:" VerticalAlignment="Center"/>
+            <ComboBox Grid.Row="3"  Height="30" Grid.Column="1"
                   ItemsSource="{Binding IncomeTypeOptions}"
                   SelectedItem="{Binding IncomeType}"/>
 
-        <!-- Freeze -->
-        <TextBlock Margin="4" Grid.Row="5" Grid.Column="0" Text="Freeze:" VerticalAlignment="Center"/>
-        <CheckBox Margin="4"  Height="30" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1"
+            <!-- Freeze -->
+            <TextBlock Margin="4" Grid.Row="4" Grid.Column="0" Text="Freeze:" VerticalAlignment="Center"/>
+            <CheckBox Margin="4"  Height="30" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1"
                   IsChecked="{Binding Freeze}"/>
 
-        <!-- Day of Transaction -->
-        <TextBlock Margin="4" Grid.Row="6" Grid.Column="0" Text="Day of Transaction:" VerticalAlignment="Center"/>
-        <TextBox Margin="4" Height="30" Grid.Row="6" Grid.Column="1" 
+            <!-- Day of Transaction -->
+            <TextBlock Margin="4" Grid.Row="5" Grid.Column="0" Text="Day of Transaction:" VerticalAlignment="Center"/>
+            <TextBox Margin="4" Height="30" Grid.Row="5" Grid.Column="1" 
                  Text="{Binding DayOfTransaction, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!-- Reminder -->
-        <TextBlock Margin="4" Grid.Row="7" Grid.Column="0" Text="Reminder:" VerticalAlignment="Top"/>
-        <CheckBox Margin="4" VerticalAlignment="Center" Grid.Row="7" Grid.Column="1"
+            <!-- Reminder -->
+            <TextBlock Margin="4" Grid.Row="6" Grid.Column="0" Text="Reminder:" VerticalAlignment="Center"/>
+            <CheckBox Margin="4" VerticalAlignment="Center" Grid.Row="6" Grid.Column="1"
                   IsChecked="{Binding GiveReminder}"/>
 
-        <!-- Button -->
-        <Button x:Name="btnAddIncome" Grid.Row="8" Grid.ColumnSpan="2" Click="btnAddIncome_Click"
-                Content="Add Income"  Height="30" Width="140"
-                Margin="4"
-                Command="{Binding AddIncomeCommand}"/>
-    </Grid>
+            <!-- Button -->
+            <Button Grid.Row="7" Grid.ColumnSpan="2" Content="Add Income" Width="140" Height="35"
+                HorizontalAlignment="Center" Margin="10"
+                Command="{Binding AddIncomeCommand}" Click="btnAddIncome_Click"/>
+        </Grid>
+    </GroupBox>
+
 </UserControl>

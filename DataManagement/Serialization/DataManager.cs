@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,16 +16,18 @@ namespace ExpenseTracker.DataManagement.Serialization
         {
             get
             {
-                return new DataContractSerializerSettings()
-                {
-                    KnownTypes = AppDomain.CurrentDomain
-                    .GetAssemblies()
-                    .SelectMany(assembly => assembly.GetTypes())
+                var knownTypes = Assembly.GetExecutingAssembly()
+                    .GetTypes()
                     .Where(type => type.IsClass && type.GetCustomAttributes(typeof(DataContractAttribute), true).Any())
-                    .ToList()
+                    .ToList();
+
+                return new DataContractSerializerSettings
+                {
+                    KnownTypes = knownTypes
                 };
             }
         }
+
         public void Save<T>(T serializableObject, string fileName)
         {
             try

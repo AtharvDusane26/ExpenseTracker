@@ -15,5 +15,6 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         string Category { get; }
         void UpdateAmount(double newAmount);
         void UpdateDate(DateTime date);
+        void UpdateCategory(string category);
     }
 }

@@ -99,7 +99,7 @@ namespace ExpenseTracker.ViewModel
             }
             else
             {
-                _userManager.UpdateOutcome(_outcome.Id, Name, Amount, OutcomeType, DayOfTransaction,Freeze,GiveReminder);
+                _userManager.UpdateOutcome(_outcome.Id, Name, Amount, OutcomeType, DayOfTransaction,Freeze,GiveReminder, _outcome.LastPaidDate);
 
                 messageBox.Show("Expense updated",
                     new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Information");

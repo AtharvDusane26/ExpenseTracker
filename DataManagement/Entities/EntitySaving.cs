@@ -22,7 +22,7 @@ namespace ExpenseTracker.DataManagement.Entities
         public string Category { get; set; }
         public ISaving Get()
         {
-            var saving = new Saving(Id, Amount,Category);
+            var saving = new Saving(Id, Amount, Date,Category);
             saving.UpdateDate(Date);
             return saving;
         }

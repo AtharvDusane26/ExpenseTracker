@@ -6,14 +6,21 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
+		<ApplicationIcon>budget.ico</ApplicationIcon>
+		<Title>Expense Tracker</Title>
+		<Authors>Atharv Dusane</Authors>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="budget.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="LiveChartsCore" Version="2.0.0-beta.89" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-beta.89" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.89" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-		<PackageReference Include="SkiaSharp" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp" Version="3.119.1" />
 	</ItemGroup>
 
 </Project>

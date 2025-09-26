@@ -10,6 +10,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
     {
         List<IFinancialGoal> Goals { get; }
         IFinancialGoal CreateGoal(string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0);
+        void UpdateGoal(string id,string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0);
         void DeleteGoal(string goalId);
         IFinancialGoal GetGoal(string goalId);
     }

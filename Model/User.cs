@@ -23,6 +23,7 @@ namespace ExpenseTracker.Model
         private List<IExpense> _userExpenses;
         private List<ISaving> _savings;
         private List<IFinancialGoal> _goals;
+        private readonly List<ITransactionHistory> _transactionHistory;
         private readonly List<INotification> _notifications;
         public User(string userId)
         {
@@ -32,6 +33,7 @@ namespace ExpenseTracker.Model
             _savings = new List<ISaving>();
             _goals = new List<IFinancialGoal>();
             _notifications = new List<INotification>();
+            _transactionHistory = new List<ITransactionHistory>();
         }
 
         public string UserId
@@ -147,6 +149,29 @@ namespace ExpenseTracker.Model
                 return _notifications;
             }
         }
+        public List<ITransactionHistory> TransactionHistory
+        {
+            get
+            {
+                return _transactionHistory;
+            }
+        }
+        public void AddToHistory(string message)
+        {
+            if (_transactionHistory.Count() == 0 || _transactionHistory.Any(o => o.Date.Month != DateTime.Now.Month))
+            {
+                var history = new TransactionHistory(Guid.NewGuid().ToString());
+                history.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount),DateTime.Now);
+                history.AddHistoryEntry(message);
+                _transactionHistory.Add(history);
+            }
+            else
+            {
+                var lastEntry = _transactionHistory.Where(o => o.Date.Month == DateTime.Now.Month).FirstOrDefault();
+                lastEntry?.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount), DateTime.Now);
+                lastEntry?.AddHistoryEntry(message);
+            }
+        }
 
         public void Create(string name, string phoneNumber, int age, double initialBalance)
         {
@@ -242,20 +267,20 @@ namespace ExpenseTracker.Model
 
             var toRemove = _notifications.FirstOrDefault(n =>
             {
-                return n.Name == id || (n.ReferenceObjectId?.ToString() == id);
+                return n.Id == id || (n.ReferenceObjectId?.ToString() == id);
             });
 
             if (toRemove != null)
                 _notifications.Remove(toRemove);
         }
         // ------------------- ISavingProvider -------------------
-        public ISaving AddToSavings(double amount, string category = "General")
+        public ISaving AddToSavings(double amount, DateTime date, string category = "General")
         {
             if (amount <= Balance)
             {
                 Balance -= amount;
                 var id = Guid.NewGuid().ToString();
-                var saving = new Saving(id, amount, category);
+                var saving = new Saving(id, amount, date, category);
                 saving.UpdateDate(DateTime.Now);
                 _savings.Add(saving);
                 return saving;
@@ -336,9 +361,18 @@ namespace ExpenseTracker.Model
         {
             var id = Guid.NewGuid().ToString();
             var goal = new FinancialGoal(id, name, targetAmount, durationInYears);
-            goal.UpdateDate(DateTime.Now);
             _goals.Add(goal);
             return goal;
+        }
+        public void UpdateGoal(string id, string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
+        {
+            var goal = _goals.FirstOrDefault(g => g.GoalId == id);
+            if (goal != null)
+            {
+                _goals.Remove(goal);
+                goal = new FinancialGoal(id, name, targetAmount, durationInYears);
+                _goals.Add(goal);
+            }
         }
 
         public void DeleteGoal(string goalId)

@@ -107,9 +107,13 @@ namespace ExpenseTracker.Model.MonitoringAndReporting
 
             foreach (var outcome in upcoming)
             {
+                if ((outcome.OutComeType == StaticData.OutcomeType.Daily && outcome.LastPaidDate.HasValue && outcome.LastPaidDate.Value.Day == DateTime.Now.Day)
+                    || (outcome.OutComeType == StaticData.OutcomeType.Monthly && outcome.LastPaidDate.HasValue && outcome.LastPaidDate.Value.Month == DateTime.Now.Month)
+                    || (outcome.OutComeType == StaticData.OutcomeType.Yearly && outcome.LastPaidDate.HasValue && outcome.LastPaidDate.Value.Year == DateTime.Now.Year))
+                    continue;
                 if ((outcome.DayOfTransaction - DateTime.Now.Day) <= 3)
                 {
-                    insights.Add($"⏰ Reminder: {outcome.Name} of {outcome.Amount:C} is due soon.");
+                    insights.Add($"⏰ Reminder: {outcome.Name} of {outcome.Amount:N2} is due soon.");
                 }
             }
 

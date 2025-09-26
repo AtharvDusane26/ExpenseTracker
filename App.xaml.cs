@@ -20,13 +20,23 @@ namespace ExpenseTracker
     /// </summary>
     public partial class App : Application
     {
+        private  Mutex _myMutex = new Mutex(true, "FF1BA877-5CF0-4FC3-8E6S-664E93206D4A");
+        [STAThread]
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-            RegisterUnhandledExceptionEvent();
-            RegisterClosingEvent();
-            RegisterServices();
-            StartApp();
+            if (!IsAlreadyStarted())
+            {
+                base.OnStartup(e);
+                RegisterUnhandledExceptionEvent();
+                RegisterClosingEvent();
+                RegisterServices();
+                StartApp();
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Application is already running.", "Error", MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                Environment.Exit(0);
+            }
         }
         private void StartApp()
         {
@@ -75,6 +85,10 @@ namespace ExpenseTracker
                 var services = ServiceProvider.Instance;
                 services.Dispose();
             };
+        }
+        private bool IsAlreadyStarted()
+        {
+            return !_myMutex.WaitOne(0, false);
         }
     }
     public class MessageBox : IMessageBoxService

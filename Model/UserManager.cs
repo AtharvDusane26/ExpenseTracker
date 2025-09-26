@@ -9,12 +9,13 @@ using ExpenseTracker.Model.Services;
 using ExpenseTracker.Model.StaticData;
 using ExpenseTracker.Model.Transactions;
 using ExpenseTracker.ViewModel;
+using LiveChartsCore;
 using System;
 using System.Collections.Generic;
 
 namespace ExpenseTracker.Model
 {
-    public class UserManager
+    public class UserManager : IDisposable
     {
         private User _user;
         private TransactionManager _transactionManager;
@@ -67,7 +68,7 @@ namespace ExpenseTracker.Model
                 if (!userIncome.CheckForLastCredit(out string message))
                 {
                     messageBox.Show(message, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Warning), "Warning");
-                    CreateNotification("Balance Update Failed", income.Id, NotificationType.Other, message);
+                   // CreateNotification("Balance Update Failed", income.Id, NotificationType.Other, message);
                     return;
                 }
                 var result = messageBox.Show($"Are you sure you want to add Rs.{userIncome.Amount} to your balance?", new MessageBoxArgs(MessageBoxButtons.YesNo, MessageBoxImage.Question), "Confirm Add to Balance");
@@ -85,7 +86,7 @@ namespace ExpenseTracker.Model
                 userIncome.DateOfCredited = DateTime.Now;
                 Save(_user);
                 messageBox.Show("Balance Updated", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Balance Updated");
-                CreateNotification("Balance Updated", userIncome.Id, NotificationType.Credited, $"Rs.{userIncome.Amount} added to your balance.");
+               // CreateNotification("Balance Updated", userIncome.Id, NotificationType.Credited, $"Rs.{userIncome.Amount} added to your balance.");
             }
         }
         // ---------------- CREATE NEW USER ----------------
@@ -97,16 +98,25 @@ namespace ExpenseTracker.Model
             Save(_user);
             return _user;
         }
+        public bool CheckIfUserNameAlreadyExist(string name)
+        {
+            var services = ServiceProvider.Instance;
+            var serializableBase = services.Resolve<SerializableBase>();
+            var users = serializableBase.Get();
+            if (users.Any(o => o.Name == name))
+                return true;
+            return false;
+        }
         // ---------------- INCOME ----------------
         public IIncome AddIncome(IncomeType type, string name, double amount)
         {
             var income = _transactionManager.CreateIncome(type, name, amount);
-            CreateNotification(
-                $"Income Added: {name}",
-                income.Id,
-                NotificationType.Credited,
-                $"New income '{name}' of Rs.{amount} added."
-            );
+            //CreateNotification(
+            //    $"Income Added: {name}",
+            //    income.Id,
+            //    NotificationType.Credited,
+            //    $"New income '{name}' of Rs.{amount} added."
+            //);
             return income;
         }
 
@@ -117,7 +127,7 @@ namespace ExpenseTracker.Model
         public void UpdateIncome(string id, IncomeType type, string name, double amount, bool freeze, bool giveReminder, int tDay)
         {
             _transactionManager.UpdateIncome(id, type, name, amount, freeze, giveReminder, tDay);
-            CreateNotification("Income Updated", id, NotificationType.Other, $"Income '{name}' updated.");
+            //CreateNotification("Income Updated", id, NotificationType.Other, $"Income '{name}' updated.");
 
         }
         public List<IIncome> GetAllIncomes() => _transactionManager.GetAllIncomes();
@@ -126,7 +136,7 @@ namespace ExpenseTracker.Model
         public IOutcome AddOutcome(string name, double amount, OutcomeType outcomeType, int dayOfTransaction)
         {
             var outcome = _transactionManager.CreateOutcome(name, amount, outcomeType, dayOfTransaction);
-            CreateNotification("Outcome Added", outcome.Id, NotificationType.Debited, $"New outcome '{name}' of Rs.{amount} created.");
+         //   CreateNotification("Outcome Added", outcome.Id, NotificationType.Debited, $"New outcome '{name}' of Rs.{amount} created.");
             return outcome;
         }
 
@@ -134,10 +144,10 @@ namespace ExpenseTracker.Model
         {
             _transactionManager.DeleteOutcome(name);
         }
-        public void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder)
+        public void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder,DateTime? lastPaidDate)
         {
-            _transactionManager.UpdateOutcome(id, name, amount, outcomeType, dayOfTransaction, freeze, giveReminder);
-            CreateNotification("Outcome Updated", id, NotificationType.Other, $"Outcome '{name}' updated.");
+            _transactionManager.UpdateOutcome(id, name, amount, outcomeType, dayOfTransaction, freeze, giveReminder, lastPaidDate);
+          //  CreateNotification("Outcome Updated", id, NotificationType.Other, $"Outcome '{name}' updated.");
 
         }
         public List<IOutcome> GetAllOutcomes()
@@ -187,14 +197,14 @@ namespace ExpenseTracker.Model
         public IExpense AddExpense(string name, double amount, DateTime date, string description, bool freeze, string category = "General")
         {
             var expense = _expenseManager.CreateExpense(name, amount, date, description, freeze, category);
-            CreateNotification("Expense Added", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' of Rs.{amount} added in category '{category}'.");
+           // CreateNotification("Expense Added", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' of Rs.{amount} added in category '{category}'.");
             return expense;
         }
 
         public void UpdateExpense(string id, string name, double amount, DateTime date, string description, bool freeze, string category = "General")
         {
             _expenseManager.UpdateExpense(id, name, amount, date, description, freeze, category);
-            CreateNotification("Expense Updated", id, NotificationType.Other, $"Expense '{name}' updated.");
+           // CreateNotification("Expense Updated", id, NotificationType.Other, $"Expense '{name}' updated.");
         }
 
         public void DeleteExpense(string id)
@@ -207,9 +217,9 @@ namespace ExpenseTracker.Model
             return _user.UserExpenses;
         }
         // ---------------- Savings ----------------
-        public void AddToSavings(double amount, string category = "General")
+        public void AddToSavings(double amount,DateTime date, string category = "General")
         {
-            _savingsManager.AddToSavings(amount, category);
+            _savingsManager.AddToSavings(amount, date, category);
         }
         public List<ISaving> GetAllSavings()
         {
@@ -234,6 +244,10 @@ namespace ExpenseTracker.Model
         {
             return _goalsManager.CreateGoal(name, targetAmount, durationInYears, monthlyInterestRate);
         }
+        public void UpdateGoal(string id,string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
+        {
+            _goalsManager.UpdateGoal(id,name, targetAmount, durationInYears, monthlyInterestRate);
+        }
         public void DeleteGoal(string goalId)
         {
             _goalsManager.DeleteGoal(goalId);
@@ -252,7 +266,44 @@ namespace ExpenseTracker.Model
             _goalsManager.AllocateMonthlyContributionToSavings();
 
         }
-
+        public void StartGoal(string id)
+        {
+            _goalsManager.StartGoal(id);
+        }
+        public void Stop(string id)
+        {
+           _goalsManager.Stop(id);
+        }
+        public void AddAmountToGoal(string id)
+        {
+            var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
+            if(_goalsManager.AddAmount(id))
+            {
+                messageBox.Show("Amount added to goal successfully.", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Amount Added");
+                return;
+            }
+            else
+            {
+                messageBox.Show("Failed to add amount to goal. Please check notifications for details.", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Warning), "Add Amount Failed");
+                return;
+            }
+        }
+        public double CalculateMonthlyContribution(double targetAmount, int durationInYears, double monthlyInterestRate = 0)
+        {
+            double monthlyContribution = 0;
+            var durationInMonths = durationInYears * 12;
+            if (monthlyInterestRate <= 0)
+            {
+                monthlyContribution = targetAmount / durationInMonths;
+            }
+            else
+            {
+                double r = monthlyInterestRate; // monthly rate in decimal
+                int n = durationInMonths;
+                monthlyContribution = (targetAmount * r) / (Math.Pow(1 + r, n) - 1);
+            }
+            return Math.Ceiling(monthlyContribution);
+        }
         // ---------------- REMINDERS ----------------
         public List<INotification> GetReminders(int daysBefore = 3)
         {
@@ -281,10 +332,21 @@ namespace ExpenseTracker.Model
             }
             users.Add(user);
             serializableBase.Set(users);
-        }
-        private void CreateNotification(string name, string referenceObject, NotificationType type, string message)
+        }       
+        private void ClearReadNotifications()
         {
-            _notificationManager.AddNotification(name, referenceObject, type, message,DateTime.Now);
+            var nm = ServiceProvider.Instance.Resolve<NotificationManager>();
+            var readNf = nm.GetAllNotifications()?.Where(o => o.IsRead)?.ToList();
+            if (readNf == null || readNf.Count == 0) return;
+            foreach (var item in readNf)
+            {
+                _user.AddToHistory(item.Message);
+                nm.DeleteNotification(item.Id);
+            }
+        }
+        public void Dispose()
+        {
+            ClearReadNotifications();
         }
     }
 

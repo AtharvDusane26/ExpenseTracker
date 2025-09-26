@@ -8,17 +8,95 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="10">
         <StackPanel>
-            <TextBlock Text="🎯 Financial Goals" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+            <!-- Header + Create Button -->
+            <Grid Margin="0,0,0,10">
+                <TextBlock Text="🎯 Financial Goals" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Foreground="{StaticResource PrimaryBrush}"
+                       HorizontalAlignment="Left"/>
+                <Button x:Name="btnCreateGoal" 
+                    Content="➕ Create Goal" 
+                    Height="35" 
+                    Width="150" 
+                    FontWeight="Bold"
+                    Cursor="Hand"
+                    HorizontalAlignment="Right" 
+                    Click="btnCreateGoal_Click"/>
+            </Grid>
 
-            <DataGrid ItemsSource="{Binding Goals}" AutoGenerateColumns="False" CanUserAddRows="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Target" Binding="{Binding TargetAmount}" />
-                    <DataGridTextColumn Header="Duration (Months)" Binding="{Binding DurationInMonths}" />
-                    <DataGridTextColumn Header="Monthly Contribution" Binding="{Binding MonthlyContribution}" />
-                    <DataGridTextColumn Header="Required Contribution" Binding="{Binding RequiredMonthlyContribution}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            <!-- DataGrid -->
+            <Border CornerRadius="8" Background="White" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                <DataGrid ItemsSource="{Binding Goals}" 
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False"
+                      SelectedItem="{Binding SelectedGoal, Mode=TwoWay}"
+                      RowBackground="White"
+                      AlternatingRowBackground="#F8F9FA"
+                      GridLinesVisibility="None"
+                      SelectionMode="Single"
+                      FontSize="14">
+
+                    <!-- Columns -->
+                    <DataGrid.Columns>
+                        <DataGridTextColumn MinWidth="120" Header="Name" Binding="{Binding Name}" />
+                        <DataGridTextColumn MinWidth="100" Header="Target" Binding="{Binding TargetAmount, StringFormat=Rs.{0:N2}}" />
+                        <DataGridTextColumn MinWidth="150" Header="Duration (Months)" Binding="{Binding DurationInMonths}" />
+                        <DataGridTextColumn MinWidth="150" Header="Monthly Contribution" Binding="{Binding MonthlyContribution, StringFormat=Rs.{0:N2}}" />
+                        <DataGridTemplateColumn MinWidth="120" Header="">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="💰 Add Amount" 
+                                        Background="{StaticResource PrimaryBrush}" 
+                                        Foreground="White" 
+                                        FontWeight="Bold"
+                                        Height="28"
+                                        Width="100"
+                                        Cursor="Hand"
+                                        Click="Button_Click"
+                                        CommandParameter="{Binding}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+                    <!-- Row Style -->
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Height" Value="35"/>
+                            <Setter Property="Margin" Value="2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridRow">
+                                        <Border x:Name="RowBorder" Background="{TemplateBinding Background}" CornerRadius="4" Padding="2">
+                                            <DataGridCellsPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="RowBorder" Property="Background" Value="#D6E6FF"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="RowBorder" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <!-- Context Menu -->
+                    <DataGrid.ContextMenu>
+                        <ContextMenu Background="White" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                            <MenuItem Header="✏ Edit" Click="EditGoal_Click" FontWeight="Bold"/>
+                            <MenuItem Header="⛔ Stop" Click="StopGoal_Click" FontWeight="Bold"/>
+                            <MenuItem Header="🗑 Delete" Click="DeleteGoal_Click" FontWeight="Bold"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </Border>
         </StackPanel>
     </Grid>
+
 </UserControl>

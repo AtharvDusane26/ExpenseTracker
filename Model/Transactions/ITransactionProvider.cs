@@ -10,5 +10,7 @@ namespace ExpenseTracker.Model.Transactions
     public interface ITransactionProvider 
     {
         List<ITransaction> Transactions { get; }
+        List<ITransactionHistory> TransactionHistory { get; }
+        void AddToHistory(string message);
     }
 }

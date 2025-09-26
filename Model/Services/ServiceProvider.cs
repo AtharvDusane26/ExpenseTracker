@@ -51,7 +51,8 @@ namespace ExpenseTracker.Model.Services
         public void Dispose()
         {
             if (_disposed) return;
-
+            var m = Resolve<UserManager>();
+            m.Dispose();
             if (_serviceProvider is IDisposable disposable)
             {
                 disposable.Dispose();

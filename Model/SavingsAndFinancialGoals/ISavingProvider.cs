@@ -11,7 +11,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
     {
         double SavingsBalance { get; }
         List<ISaving> Savings { get; }
-        ISaving AddToSavings(double amount, string category = "General");
+        ISaving AddToSavings(double amount,DateTime date, string category = "General");
         void WithdrawFromSavings(double amount, string category = null);
         List<ISaving> GetAllSavings();
         List<INotification> GetSavingsReminders(int daysBefore = 1);

@@ -6,53 +6,82 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="10">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10">
+        <StackPanel Margin="0">
 
-            <!-- Expenses -->
-            <TextBlock Text="💵 Expenses" FontSize="18" FontWeight="Bold"/>
-            <ItemsControl ItemsSource="{Binding ExpenseInsights}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="5,2" TextWrapping="Wrap"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!-- Expenses Section -->
+            <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Padding="10" Margin="0,5" >
+                <StackPanel>
+                    <TextBlock Text="💵 Expenses" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <ItemsControl ItemsSource="{Binding ExpenseInsights}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FA" CornerRadius="4" Padding="6" Margin="2">
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Savings -->
-            <TextBlock Text="💰 Savings" FontSize="18" FontWeight="Bold"/>
-            <ItemsControl ItemsSource="{Binding SavingsInsights}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="5,2" TextWrapping="Wrap"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!-- Savings Section -->
+            <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Padding="10" Margin="0,5">
+                <StackPanel>
+                    <TextBlock Text="💰 Savings" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <ItemsControl ItemsSource="{Binding SavingsInsights}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F0FFF0" CornerRadius="4" Padding="6" Margin="2">
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Goals -->
-            <TextBlock Text="🎯 Goals" FontSize="18" FontWeight="Bold"/>
-            <ItemsControl ItemsSource="{Binding GoalInsights}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="5,2" TextWrapping="Wrap"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!-- Goals Section -->
+            <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Padding="10" Margin="0,5">
+                <StackPanel>
+                    <TextBlock Text="🎯 Goals" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <ItemsControl ItemsSource="{Binding GoalInsights}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#FFF8E1" CornerRadius="4" Padding="6" Margin="2">
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Outcomes -->
-            <TextBlock Text="📅 Upcoming Outcomes" FontSize="18" FontWeight="Bold"/>
-            <ItemsControl ItemsSource="{Binding OutcomeInsights}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Margin="5,2" TextWrapping="Wrap"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!-- Outcomes Section -->
+            <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Padding="10" Margin="0,5">
+                <StackPanel>
+                    <TextBlock Text="📅 Upcoming Outcomes" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <ItemsControl ItemsSource="{Binding OutcomeInsights}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#FFEFF5" CornerRadius="4" Padding="6" Margin="2">
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Prediction -->
-            <TextBlock Text="📈 Prediction" FontSize="18" FontWeight="Bold" Margin="0,10,0,0"/>
-            <TextBlock Text="{Binding PredictedExpenses}" Margin="5,2"/>
+            <!-- Prediction Section -->
+            <Border Background="White" CornerRadius="8" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1" Padding="10" Margin="0,5">
+                <StackPanel>
+                    <TextBlock Text="📈 Prediction" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding PredictedExpenses}" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" />
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </ScrollViewer>
+
 </UserControl>

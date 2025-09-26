@@ -102,9 +102,10 @@ namespace ExpenseTracker.Model.Transactions
             Save();
         }
 
-        internal void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder)
+        internal void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder,DateTime? lastPaidDate)
         {
             var outcome = new Outcome(name, amount, outcomeType);
+            outcome.LastPaidDate = lastPaidDate;
             outcome.Create(id);
             outcome.UpdateTransactionDay(dayOfTransaction);
             outcome.FreezeTransaction(freeze);
@@ -199,8 +200,8 @@ namespace ExpenseTracker.Model.Transactions
                 );
 
                 // Notification
-                AddNotification(expense.ExpenseId, expense.ExpenseId, NotificationType.Debited,
-                    $"Outcome '{outcome.Name}' of Rs.{outcome.Amount} converted to Expense.");
+                //AddNotification(expense.ExpenseId, expense.ExpenseId, NotificationType.Debited,
+                //    $"Outcome '{outcome.Name}' of Rs.{outcome.Amount} converted to Expense.");
             }
             return true;
         }

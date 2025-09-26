@@ -83,14 +83,19 @@
                     </Grid>
                 </Border>
             </Grid>
-
             <!-- ================= Right Panel: Notifications ================= -->
             <Border Grid.Column="1" Background="White" Margin="5" CornerRadius="10" Padding="10" Effect="{StaticResource ShadowEffect}">
                 <StackPanel>
-                    <TextBlock Text="Notifications" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <ListView ItemsSource="{Binding Notifications}" Background="Transparent" BorderThickness="0">
+                    <TextBlock Text="Notifications 🔔" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ListView  ItemsSource="{Binding Notifications}" Background="Transparent" BorderThickness="0">
                         <ListView.ItemTemplate>
-                                <DataTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="✔" BorderBrush="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
+                                        Width="30" Height="30" Margin="5" BorderThickness="2"
+                                        VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Mark as read"
+                                        Command="{Binding DataContext.MarkAsReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"/>
                                     <Border Background="{Binding IsRead, Converter={StaticResource ReadToBackgroundConverter}}"
                                             BorderThickness="2"
                                             BorderBrush="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}"
@@ -99,17 +104,13 @@
                                         Margin="0 0 0 5">
                                         <DockPanel>
                                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                                            <TextBlock Text="🔔" Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}" FontSize="16" Margin="0,0,8,0"/>
-                                            <TextBlock Text="{Binding Message}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap"/>
+                                                <TextBlock TextWrapping="Wrap" Text="🔔" Foreground="{Binding AccentColor, Converter={StaticResource StringToBrushConverter}}" FontSize="16" Margin="0,0,8,0"/>
+                                                <TextBlock  Text="{Binding Message}" FontWeight="DemiBold" FontSize="13" TextWrapping="WrapWithOverflow"/>
                                             </StackPanel>
-                                            <Button Content="✔"
-                                                    Width="30" Height="30"
-                                                    DockPanel.Dock="Right"
-                                                    Command="{Binding DataContext.MarkAsReadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}"/>
                                         </DockPanel>
                                     </Border>
-                                </DataTemplate>
+                                </StackPanel>
+                            </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </StackPanel>

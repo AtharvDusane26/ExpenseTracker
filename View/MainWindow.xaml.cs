@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.Services;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;

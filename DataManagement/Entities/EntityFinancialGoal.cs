@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace ExpenseTracker.DataManagement.Entities
 {
     [DataContract]
-    public class EntityFinancialGoal: EntityBase
+    public class EntityFinancialGoal : EntityBase
     {
         public EntityFinancialGoal(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
-       [DataMember]
+        [DataMember]
         public string Name { get; set; }
         [DataMember]
         public double TargetAmount { get; set; }
@@ -22,11 +22,31 @@ namespace ExpenseTracker.DataManagement.Entities
         public double MonthlyContribution { get; set; }
         [DataMember]
         public DateTime StartDate { get; set; }
+        [DataMember]
+        double MonthlyInterestRate { get; set; }
+        [DataMember]
+        public bool Running { get; set; }
+
+        [DataMember]
+        public double CollectedAmount { get; set; }
+
+        [DataMember]
+        public DateTime EndDate { get; set; }
+
+        [DataMember]
+        public DateTime DateOfLastContribution { get; set; }
 
         public IFinancialGoal Get()
         {
-            var goal = new FinancialGoal(Id,Name, TargetAmount, DurationInMonths);
-            goal.UpdateDate(StartDate);
+            var goal = new FinancialGoal(Id, Name, TargetAmount, DurationInMonths);
+            goal.MonthlyInterestRate = MonthlyInterestRate;
+            if (Running)
+                goal.Start(StartDate);
+            else
+                goal.Stop();
+            EndDate = goal.EndDate;
+            CollectedAmount = goal.CollectedAmount;
+            DateOfLastContribution = goal.DateOfLastContribution;
             return goal;
         }
 
@@ -40,6 +60,11 @@ namespace ExpenseTracker.DataManagement.Entities
                 this.DurationInMonths = goal.DurationInMonths;
                 this.MonthlyContribution = goal.MonthlyContribution;
                 this.StartDate = goal.StartDate;
+                this.MonthlyInterestRate = goal.MonthlyInterestRate;
+                this.Running = goal.Running;
+                this.CollectedAmount = goal.CollectedAmount;
+                this.EndDate = goal.EndDate;
+                this.DateOfLastContribution = goal.DateOfLastContribution;
             }
         }
     }

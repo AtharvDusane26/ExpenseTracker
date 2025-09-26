@@ -6,42 +6,54 @@
              xmlns:local="clr-namespace:ExpenseTracker.View"
              mc:Ignorable="d" 
              Height="400" Width="500">
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <GroupBox Header="Add Expense" Padding="10" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical">
             <!-- Name -->
-            <TextBlock Text="Name:" FontWeight="Bold"/>
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Margin="4" Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center"/>
+            <TextBox Margin="4" Grid.Row="0" Height="30" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Amount -->
-            <TextBlock Text="Amount:" FontWeight="Bold"/>
-            <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Margin="4" Grid.Row="1" Grid.Column="0" Text="Amount:" VerticalAlignment="Center"/>
+            <TextBox Margin="4" Height="30" Grid.Row="1" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Date -->
-            <TextBlock Text="Date:" FontWeight="Bold"/>
-            <DatePicker SelectedDate="{Binding DateOfExpense}" />
+            <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Date:" VerticalAlignment="Center"/>
+            <DatePicker Margin="4" Height="30" Grid.Row="2" Grid.Column="1" SelectedDate="{Binding DateOfExpense}"/>
 
             <!-- Description -->
-            <TextBlock Text="Description:" FontWeight="Bold"/>
-            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" 
-                     AcceptsReturn="True"  
-                     Height="60"/>
+            <TextBlock Margin="4" Grid.Row="3" Grid.Column="0" Text="Description:" VerticalAlignment="Top"/>
+            <TextBox VerticalContentAlignment="Top" Margin="4" Grid.Row="3" Grid.Column="1" Height="60" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" AcceptsTab="True"/>
 
             <!-- Category -->
-            <TextBlock Text="Category:" FontWeight="Bold"/>
-            <TextBox Text="{Binding Category, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Margin="4" Grid.Row="4" Grid.Column="0" Text="Category:" VerticalAlignment="Center"/>
+            <ComboBox Margin="4" Height="30" Grid.Row="4" Grid.Column="1"
+                  ItemsSource="{Binding CategoryOptions}"
+                  SelectedItem="{Binding Category}"/>
 
-            <!-- Freeze -->
-            <CheckBox Content="Freeze Transaction" IsChecked="{Binding Freeze}" />
-        </StackPanel>
+            <!-- Freeze Transaction -->
+            <TextBlock Margin="4" Grid.Row="5" Grid.Column="0" Text="Freeze Transaction:" VerticalAlignment="Center"/>
+            <CheckBox Margin="4" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Freeze}"/>
 
-        <!-- Buttons -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button Content="Save" Width="100" Margin="0,0,10,0" IsDefault="True" Click="Save_Click"/>
-        </StackPanel>
-    </Grid>
+            <!-- Add Expense Button -->
+            <Button Grid.Row="6" Grid.ColumnSpan="2" Content="Add Expense" Width="140" Height="35"
+                HorizontalAlignment="Center" Margin="10"
+                Command="{Binding AddExpenseCommand}" Click="btnAddExpense_Click"/>
+        </Grid>
+    </GroupBox>
+
+
 </UserControl>

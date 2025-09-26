@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="ExpenseTracker.View.CreateSavigsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ExpenseTracker.View"
+             mc:Ignorable="d" 
+             Height="400" Width="500">
+    <GroupBox Header="Add Saving" Padding="10" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Amount -->
+            <TextBlock Margin="4" Grid.Row="0" Grid.Column="0" Text="Amount:" VerticalAlignment="Center"/>
+            <TextBox Margin="4" Grid.Row="0" Height="30" Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- Date -->
+            <TextBlock Margin="4" Grid.Row="1" Grid.Column="0" Text="Date:" VerticalAlignment="Center"/>
+            <DatePicker Margin="4" Height="30" Grid.Row="1" Grid.Column="1" SelectedDate="{Binding Date}"/>
+
+            <!-- Category -->
+            <TextBlock Margin="4" Grid.Row="2" Grid.Column="0" Text="Category:" VerticalAlignment="Center"/>
+            <ComboBox Margin="4" Height="30" Grid.Row="2" Grid.Column="1"
+                  ItemsSource="{Binding CategoryOptions}"
+                  SelectedItem="{Binding Category}"/>
+
+            <!-- Freeze -->
+            <TextBlock Margin="4" Grid.Row="3" Grid.Column="0" Text="Freeze:" VerticalAlignment="Center"/>
+            <CheckBox Margin="4" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding Freeze}"/>
+
+            <!-- Save Button -->
+            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Add Saving" Width="140" Height="35"
+                HorizontalAlignment="Center" Margin="10"
+                Command="{Binding AddSavingCommand}" Click="btnAddSaving_Click"/>
+        </Grid>
+    </GroupBox>
+
+</UserControl>

@@ -8,44 +8,96 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!-- Header + Add Button -->
-        <Grid>
-            <TextBlock Text="💸 Outcome" FontSize="20" HorizontalAlignment="Left" FontWeight="Bold" Margin="0,0,0,10"/>
-            <Button x:Name="btnAddOutcome" Content="Add Outcome" HorizontalAlignment="Right" Height="30" Width="140" Click="btnAddOutcome_Click"/>
+        <Grid Margin="0,0,0,10">
+            <TextBlock Text="💸 Outcome" FontSize="24" FontWeight="Bold" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" 
+                   Foreground="{StaticResource PrimaryBrush}"/>
+            <Button x:Name="btnAddOutcome" Content="➕ Add Outcome" 
+                HorizontalAlignment="Right" Height="35" Width="150"
+                FontWeight="Bold" Cursor="Hand" Click="btnAddOutcome_Click"/>
         </Grid>
 
-        <!-- DataGrid -->
-        <DataGrid Grid.Row="1" IsReadOnly="True"
-              ItemsSource="{Binding Outcomes}"
-              SelectedItem="{Binding SelectedOutcome}"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn MinWidth="100" Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn MinWidth="100" Header="Amount" Binding="{Binding Amount}" />
-                <DataGridTextColumn Header="Type" Binding="{Binding OutComeType, StringFormat={}{0}}" />                  
-                <DataGridTextColumn MinWidth="100" Header="Day" Binding="{Binding DayOfTransaction}" />
+        <!-- DataGrid with card style -->
+        <Border Grid.Row="1" CornerRadius="8" Background="White" 
+            BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+            <DataGrid IsReadOnly="True"
+                  ItemsSource="{Binding Outcomes}"
+                  SelectedItem="{Binding SelectedOutcome}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  RowBackground="White" AlternatingRowBackground="#F8F9FA"
+                  GridLinesVisibility="None"
+                  HeadersVisibility="Column"
+                  SelectionMode="Single"
+                  FontSize="14"
+                  Margin="0"
+                  Padding="0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn MinWidth="120" Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn MinWidth="100" Header="Amount" Binding="{Binding Amount, StringFormat=Rs.{0:N2}}" />
+                    <DataGridTextColumn MinWidth="100" Header="Type" Binding="{Binding OutComeType}" />
+                    <DataGridTextColumn MinWidth="100" Header="Day" Binding="{Binding DayOfTransaction}" />
 
-                <DataGridTemplateColumn MinWidth="120" Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button x:Name="btnDeductFromBalance" Content="Add as Expense" Click="btnDeductFromBalance_Click"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
+                    <DataGridTemplateColumn MinWidth="140" Header="Action">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Add as Expense" 
+                                    Background="{StaticResource PrimaryBrush}" 
+                                    Foreground="White" 
+                                    Padding="5,2"
+                                    FontSize="13"
+                                    Cursor="Hand"
+                                    BorderThickness="0"
+                                    Click="btnDeductFromBalance_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
 
-            <!-- Context Menu -->
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Edit" Click="EditOutcome_Click"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-        </DataGrid>
+                <!-- Row Style -->
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Height" Value="35"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridRow">
+                                    <Border x:Name="DGR_Border" 
+                                        Background="{TemplateBinding Background}" 
+                                        CornerRadius="4" 
+                                        Padding="2">
+                                        <DataGridCellsPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="DGR_Border" Property="Background" Value="#D6E6FF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="DGR_Border" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <!-- Context Menu -->
+                <DataGrid.ContextMenu>
+                    <ContextMenu Background="White" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
+                        <MenuItem Header="✏ Edit" FontWeight="Bold" Click="EditOutcome_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </Border>
     </Grid>
+
 
 </UserControl>

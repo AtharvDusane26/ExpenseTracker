@@ -18,18 +18,18 @@ using System.Windows.Shapes;
 namespace ExpenseTracker.View
 {
     /// <summary>
-    /// Interaction logic for CreateExpenseEntryView.xaml
+    /// Interaction logic for CreateFinancialGoalView.xaml
     /// </summary>
-    public partial class CreateExpenseEntryView : UserControl,IDynamicView
+    public partial class CreateFinancialGoalView : UserControl,IDynamicView
     {
-        private ExpenseEntryViewModel _component;
-        public CreateExpenseEntryView()
+        private CreateFinancialGoalViewModel  _component;
+        public CreateFinancialGoalView()
         {
             InitializeComponent();
         }
         public ViewCreatingArgs ViewCreatingArgs { get; } = new ViewCreatingArgs
         {
-            Title = "Expense Tracker | Add Expense",
+            Title = "Expense Tracker | Create Need",
             ResizeMode = ViewResizeMode.NoResize,
             StartupLocation = ViewStartupLocation.CenterOwner,
             ShowInTaskbar = false,
@@ -38,18 +38,18 @@ namespace ExpenseTracker.View
         };
         public void SetComponent(object component)
         {
-            _component = component as ExpenseEntryViewModel;
-        }     
-        private void btnAddExpense_Click(object sender, RoutedEventArgs e)
+            _component = component as CreateFinancialGoalViewModel;
+        }
+        private void Check_Contribution(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ExpenseEntryViewModel vm)
-            {
-                vm.Save();
+            var amt = _component.CalculateMonthlyInstallment();
+            if(amt > 0)
+                System.Windows.MessageBox.Show($"Monthly Contribution: Rs. {amt}", "",System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
 
-                // close dialog via IViewService in your app
-                var viewService = ExpenseTracker.Model.Services.ServiceProvider.Instance.Resolve<IViewService>();
-                viewService.Close(this);
-            }
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            _component.SaveGoal();
         }
     }
 }

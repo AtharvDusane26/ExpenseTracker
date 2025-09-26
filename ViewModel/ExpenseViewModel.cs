@@ -25,7 +25,13 @@ namespace ExpenseTracker.ViewModel
             var userManager = ServiceProvider.Instance.Resolve<UserManager>();
             Expenses = new ObservableCollection<IExpense>(userManager.GetAllExpenses().Where(o => o.DateOfExpense.Month == DateTime.Now.Month));
         }
-
+        public bool IsEditable
+        {
+            get
+            {
+                return SelectedExpense != null && SelectedExpense.Category != "Outcome";
+            }
+        }
         public ObservableCollection<IExpense> Expenses
         {
             get => _expenses;
@@ -48,6 +54,7 @@ namespace ExpenseTracker.ViewModel
                 {
                     _selectedExpense = value;
                     OnPropertyChanged(nameof(SelectedExpense));
+                    OnPropertyChanged(nameof(IsEditable));
                 }
             }
         }

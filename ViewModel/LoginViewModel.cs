@@ -79,7 +79,7 @@ namespace ExpenseTracker.ViewModel
             {
                 var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
                 messageBox.Show(errorMessage, new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Input Error");
-               return false;
+                return false;
             }
             if (!string.IsNullOrWhiteSpace(Age))
             {
@@ -89,6 +89,7 @@ namespace ExpenseTracker.ViewModel
             {
                 double.TryParse(InitialBalance, out initialBalance);
             }
+
             _userManager.CreateUser(UserName, PhoneNumber, age, initialBalance);
             return true;
         }
@@ -102,7 +103,7 @@ namespace ExpenseTracker.ViewModel
             catch (ArgumentNullException)
             {
                 var messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
-                messageBox.Show("User not found. Please check the username or create a new account.", new MessageBoxArgs(MessageBoxButtons.OK,MessageBoxImage.Error) ,"Login Error");
+                messageBox.Show("User not found. Please check the username or create a new account.", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Login Error");
                 return false;
             }
         }
@@ -122,6 +123,11 @@ namespace ExpenseTracker.ViewModel
             if (!string.IsNullOrWhiteSpace(InitialBalance) && !double.TryParse(InitialBalance, out _))
             {
                 errorMessage = "Initial Balance must be a valid number.";
+                return false;
+            }
+            if (_userManager.CheckIfUserNameAlreadyExist(UserName))
+            {
+                errorMessage = $"User with name {UserName} already exist";
                 return false;
             }
             return true;
