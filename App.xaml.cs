@@ -59,12 +59,12 @@ namespace ExpenseTracker
         private void RegisterServices()
         {
             var services = ServiceProvider.Instance;
+            services.AddSingleton<IViewService>(new WpfViewService());
+            services.AddTransient<IMessageBoxService>(sp => new MessageBox());
             services.AddSingleton(new NotificationManager());
             services.AddSingleton(new UserManager());
             services.AddSingleton(new DataManager());
             services.AddTransient(f => new SerializableBase());
-            services.AddSingleton<IViewService>(new WpfViewService());
-            services.AddTransient<IMessageBoxService>(sp => new MessageBox());
             services.BuildServiceProvider();
         }
         private void RegisterUnhandledExceptionEvent()

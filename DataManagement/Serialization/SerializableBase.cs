@@ -13,42 +13,60 @@ namespace ExpenseTracker.DataManagement.Serialization
     public class SerializableBase
     {
         private readonly string _filePath;
+        private readonly IMessageBoxService _messageBox;
         public SerializableBase()
         {
-            var directory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Expense Tracker");
-            if(!System.IO.Directory.Exists(directory))
+            var directory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Expense Tracker");
+            if (!System.IO.Directory.Exists(directory))
             {
                 System.IO.Directory.CreateDirectory(directory);
             }
             _filePath = System.IO.Path.Combine(directory, "Users.xml");
+            _messageBox = ServiceProvider.Instance.Resolve<IMessageBoxService>();
         }
         public List<User> Get()
         {
-            var users = new List<User>();
-            var services = ServiceProvider.Instance;
-            var dataManager = services.Resolve<DataManager>();
-            var pocos = dataManager.Read<List<EntityUser>>(_filePath);
-            if (pocos != null)
+            try
             {
-                pocos.ForEach(poco =>
+                var users = new List<User>();
+                var services = ServiceProvider.Instance;
+                var dataManager = services.Resolve<DataManager>();
+                var pocos = dataManager.Read<List<EntityUser>>(_filePath);
+                if (pocos != null)
                 {
-                    users.Add(poco.Get());
-                });
+                    pocos.ForEach(poco =>
+                    {
+                        users.Add(poco.Get());
+                    });
+                }
+                return users;
             }
-            return users;
+            catch (Exception e)
+            {
+                _messageBox.Show("Something went wrong while receiving user data,please contact service provider", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Error");
+                return new List<User>();
+            }
+
         }
         public void Set(List<User> value)
         {
-            var pocos = new List<EntityUser>();
-            var services = ServiceProvider.Instance;
-            var dataManager = services.Resolve<DataManager>();
-            foreach (var user in value)
+            try
             {
-                var entityUser = new EntityUser(user.UserId);
-                entityUser.Set(user);
-                pocos.Add(entityUser);
+                var pocos = new List<EntityUser>();
+                var services = ServiceProvider.Instance;
+                var dataManager = services.Resolve<DataManager>();
+                foreach (var user in value)
+                {
+                    var entityUser = new EntityUser(user.UserId);
+                    entityUser.Set(user);
+                    pocos.Add(entityUser);
+                }
+                dataManager.Save(pocos, _filePath);
             }
-            dataManager.Save(pocos, _filePath);
+            catch (Exception e)
+            {
+                _messageBox.Show("Something went wrong while saving users data,please contact service provider", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Error), "Error");
+            }
         }
     }
 }
