@@ -81,6 +81,7 @@
                 <DataGrid.ContextMenu>
                     <ContextMenu Background="White" BorderBrush="{StaticResource BorderBrushColor}" BorderThickness="1">
                         <MenuItem Header="✏ Edit" Click="EditSaving_Click" FontWeight="Bold"/>
+                        <MenuItem Header="💰 Withdraw" Click="WithdrawSaving_Click" FontWeight="Bold"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>

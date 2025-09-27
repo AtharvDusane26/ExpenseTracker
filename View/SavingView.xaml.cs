@@ -38,5 +38,10 @@ namespace ExpenseTracker.View
         {
             _component.AddSaving();
         }
+
+        private void WithdrawSaving_Click(object sender, RoutedEventArgs e)
+        {
+            _component.WithdrawSaving();
+        }
     }
 }

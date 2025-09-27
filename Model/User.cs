@@ -288,13 +288,13 @@ namespace ExpenseTracker.Model
             return null;
         }
 
-        public void WithdrawFromSavings(double amount, string category = null)
+        public void WithdrawFromSavings(double amount, string savingId = null)
         {
             double remaining = amount;
 
-            var applicableSavings = string.IsNullOrEmpty(category)
+            var applicableSavings = string.IsNullOrEmpty(savingId)
                 ? _savings
-                : _savings.Where(s => s.Category == category).ToList();
+                : _savings.Where(s => s.SavingId == savingId).ToList();
 
             foreach (var s in applicableSavings)
             {

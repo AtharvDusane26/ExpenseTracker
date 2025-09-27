@@ -76,5 +76,14 @@ namespace ExpenseTracker.ViewModel
             sv.ShowDialog(vm);
             Refresh();
         }
+        public void WithdrawSaving()
+        {
+            if (SelectedSaving == null) return;
+            var vm = new WithdrawSavingsViewModel(SelectedSaving);
+            var sv = ServiceProvider.Instance.Resolve<IViewService>();
+            sv.ShowDialog(vm);
+            Refresh();
+        }
+
     }
 }

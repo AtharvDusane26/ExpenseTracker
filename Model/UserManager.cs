@@ -230,9 +230,9 @@ namespace ExpenseTracker.Model
         {
             return _savingsManager.Get();
         }
-        public void WithdrawFromSavings(double amount)
+        public void WithdrawFromSavings(double amount,string savingid)
         {
-            _savingsManager.WithdrawFromSavings(amount);
+            _savingsManager.WithdrawFromSavings(amount,savingid);
         }
         public double GetSavingsBalance()
         {

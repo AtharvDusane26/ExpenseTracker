@@ -22,9 +22,9 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
             AddNotification("Savings Added", $"Savings_{(_user as User).UserId}", NotificationType.Credited, $"Rs.{amount} added to savings in category '{category}'.");
         }
 
-        internal void WithdrawFromSavings(double amount)
+        internal void WithdrawFromSavings(double amount,string savingId)
         {
-            _user.WithdrawFromSavings(amount);
+            _user.WithdrawFromSavings(amount,savingId);
             Save();
             AddNotification("Savings Withdrawn", $"Savings_{(_user as User).UserId}", NotificationType.Debited, $"Rs.{amount} withdrawn from savings.");
         }
