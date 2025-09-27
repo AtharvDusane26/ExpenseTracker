@@ -94,7 +94,12 @@ namespace ExpenseTracker.ViewModel
         }
         public string GetTransactionHistory()
         {
-            return _reportManager.GetTransactionHistory(SelectedMonthIndex+1);
+            return _reportManager.GetTransactionHistory(SelectedMonthIndex + 1);
+        }
+        protected override void Refresh()
+        {
+            LoadReport();
+            base.Refresh();
         }
     }
 }

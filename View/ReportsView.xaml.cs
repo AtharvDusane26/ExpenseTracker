@@ -29,6 +29,10 @@ namespace ExpenseTracker.View
         {
             InitializeComponent();
             DataContext = _component = new ReportViewModel();
+            Loaded += (o, e) =>
+            {
+                _component.OnTabChanged?.Invoke();
+            };
         }
 
         private void ExportReport_Click(object sender, RoutedEventArgs e)
