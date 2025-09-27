@@ -35,6 +35,8 @@ namespace ExpenseTracker.Model.Notifications
             var id = Guid.NewGuid().ToString();
             var notification = new Notification(id, name, referenceObject, type, message, date);
             _provider.AddNotification(notification);
+            if (notification.Type == NotificationType.Debited || notification.Type == NotificationType.Credited)
+                (_provider as User)?.AddToHistory(notification.Message);
             Save();
         }
 
@@ -54,9 +56,7 @@ namespace ExpenseTracker.Model.Notifications
         {
             var notification = _provider.Notifications.FirstOrDefault(n => n.Id == id);
             if (notification == null) return;
-            notification.MarkAsRead();
-            if (notification.Type == NotificationType.Debited || notification.Type == NotificationType.Credited)
-                (_provider as User)?.AddToHistory(notification.Message);
+            notification.MarkAsRead();         
             Save();
         }
         public void MarkAsUnRead(string id)

@@ -158,20 +158,51 @@ namespace ExpenseTracker.Model
         }
         public void AddToHistory(string message)
         {
-            if (_transactionHistory.Count() == 0 || _transactionHistory.Any(o => o.Date.Month != DateTime.Now.Month))
+            var currentEntry = _transactionHistory
+                .FirstOrDefault(o => o.Date.Month == DateTime.Now.Month
+                                  && o.Date.Year == DateTime.Now.Year);
+
+            if (currentEntry == null)
             {
                 var history = new TransactionHistory(Guid.NewGuid().ToString());
-                history.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount),DateTime.Now);
+                history.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount), DateTime.Now);
                 history.AddHistoryEntry(message);
                 _transactionHistory.Add(history);
             }
             else
             {
-                var lastEntry = _transactionHistory.Where(o => o.Date.Month == DateTime.Now.Month).FirstOrDefault();
-                lastEntry?.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount), DateTime.Now);
-                lastEntry?.AddHistoryEntry(message);
+                currentEntry.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount), DateTime.Now);
+                currentEntry.AddHistoryEntry(message);
+            }
+            if (_transactionHistory.Count > 12)
+            {
+                var oldest = _transactionHistory.OrderBy(o => o.Date).First();
+                _transactionHistory.Remove(oldest);
             }
         }
+
+        //public void AddToHistory(string message)
+        //{
+        //    if (_transactionHistory.Count() == 0 || _transactionHistory.Any(o => o.Date.Month != DateTime.Now.Month))
+        //    {
+        //        var history = new TransactionHistory(Guid.NewGuid().ToString());
+        //        history.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount),DateTime.Now);
+        //        history.AddHistoryEntry(message);
+        //        _transactionHistory.Add(history);
+        //    }
+        //    else
+        //    {
+        //        var lastEntry = _transactionHistory.Where(o => o.Date.Month == DateTime.Now.Month).FirstOrDefault();
+        //        lastEntry?.Update(Balance, SavingsBalance, UserExpenses.Sum(e => e.Amount), DateTime.Now);
+        //        lastEntry?.AddHistoryEntry(message);
+        //    }
+        //    if(_transactionHistory.Count > 12)
+        //    {
+        //        var lastEntry = _transactionHistory.Where(o => o.Date.Month == DateTime.Now.Month && o.Date.Year != DateTime.Now.Year);
+        //        if(lastEntry != null && lastEntry.Count() > 0)
+        //            _transactionHistory.Remove(lastEntry.First());               
+        //    }
+        //}
 
         public void Create(string name, string phoneNumber, int age, double initialBalance)
         {

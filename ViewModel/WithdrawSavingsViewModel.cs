@@ -28,7 +28,7 @@ namespace ExpenseTracker.ViewModel
         }
         private void Init()
         {
-            SavingAmount = _userManager.GetSavingsBalance();
+            _amount = _userManager.GetBalance();
             _savingAmount = _saving.Amount;
             _amountToWithdraw = 0;
 
@@ -67,8 +67,10 @@ namespace ExpenseTracker.ViewModel
                 _userManager.WithdrawFromSavings(AmountToWithdraw,_saving.SavingId);
                 SavingAmount -= AmountToWithdraw;
                 AmountToWithdraw = 0;
+                _amount = _userManager.GetBalance();
                 _messageBox.Show("Withdrawal successful.", new MessageBoxArgs(MessageBoxButtons.OK, MessageBoxImage.Information), "Success");
                 OnPropertyChanged(nameof(SavingAmount));
+                OnPropertyChanged(nameof(Amount));
             }
         }
     }
