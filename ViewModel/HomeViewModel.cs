@@ -75,6 +75,8 @@ namespace ExpenseTracker.Model.ViewModels
             LoadBalanceChart();
 
             var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            userManager.GetReminders();
+            userManager.GetSavingsReminders();
             Notifications = new ObservableCollection<INotification>(
                 notificationManager.GetUnreadNotifications()
                                    .OrderByDescending(o => o.Date)

@@ -102,7 +102,7 @@ namespace ExpenseTracker.Model.Transactions
             Save();
         }
 
-        internal void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder,DateTime? lastPaidDate)
+        internal void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder, DateTime? lastPaidDate)
         {
             var outcome = new Outcome(name, amount, outcomeType);
             outcome.LastPaidDate = lastPaidDate;
@@ -120,6 +120,44 @@ namespace ExpenseTracker.Model.Transactions
         internal List<IOutcome> GetAllOutcomes() => OutcomeProvider.Outcomes;
 
         // ---------------- REMINDERS ----------------
+
+        public bool VerifyTransactionToSendNotification(ITransaction transaction)
+        {
+            if (transaction == null)
+                return false;
+            if (transaction.Freeze)
+                return false;
+            if (transaction is IOutcome outcome)
+            {
+
+                switch (outcome.OutComeType)
+                {
+                    case Model.StaticData.OutcomeType.Daily:
+                        if (outcome.LastPaidDate?.Day == DateTime.Today.Day)
+                        {
+                            return false;
+                        }
+                        return true;
+                    case Model.StaticData.OutcomeType.Monthly:
+                        if (outcome.LastPaidDate?.Month == DateTime.Today.Month)
+                        {
+                            return false;
+                        }
+                        return true;
+                    case Model.StaticData.OutcomeType.Yearly:
+                        if (outcome.LastPaidDate?.Year == DateTime.Today.Year)
+                        {
+                            return false;
+                        }
+                        return true;
+                }
+            }
+            else if (transaction is Income income)
+            {
+                return income.CheckForLastCredit(out string _);
+            }
+            return true;
+        }
         internal List<INotification> GetUpcomingReminders(int daysBefore = 3)
         {
             var notifications = new List<INotification>();
@@ -131,8 +169,9 @@ namespace ExpenseTracker.Model.Transactions
 
             foreach (var transaction in _user.Transactions)
             {
-                if (transaction.Freeze)
+                if (!VerifyTransactionToSendNotification(transaction) && transaction.GiveReminder == true)
                     continue;
+
 
                 int daysUntilTransaction = transaction.DayOfTransaction - today.Day;
 
@@ -215,7 +254,7 @@ namespace ExpenseTracker.Model.Transactions
 
         private void AddNotification(string name, string referenceId, NotificationType type, string message)
         {
-           var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
+            var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();
             notificationManager.AddNotification(name, referenceId, type, message, DateTime.Now);
 
         }
