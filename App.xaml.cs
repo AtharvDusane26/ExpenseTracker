@@ -1,4 +1,6 @@
-﻿using ExpenseTracker.DataManagement.Serialization;
+﻿using DBConfig;
+using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.DataManagement.Serialization;
 using ExpenseTracker.Model;
 using ExpenseTracker.Model.Notifications;
 using ExpenseTracker.Model.Services;
@@ -20,7 +22,7 @@ namespace ExpenseTracker
     /// </summary>
     public partial class App : Application
     {
-        private  Mutex _myMutex = new Mutex(true, "FF1BA877-5CF0-4FC3-8E6S-664E93206D4A");
+        private Mutex _myMutex = new Mutex(true, "FF1BA877-5CF0-4FC3-8E6S-664E93206D4A");
         [STAThread]
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -41,6 +43,12 @@ namespace ExpenseTracker
         private void StartApp()
         {
             var services = ServiceProvider.Instance;
+
+
+            var component = new DatabaseConnectionComponent();
+            component.LoadConfig();
+            var manager = new DataBaseManager();
+            manager.Start(component.ConfigFilePath, null);
             var loginViewModel = new LoginViewModel();
             var viewService = services.Resolve<IViewService>();
             var window = new MainWindow();
@@ -65,6 +73,7 @@ namespace ExpenseTracker
             services.AddSingleton(new UserManager());
             services.AddSingleton(new DataManager());
             services.AddTransient(f => new SerializableBase());
+            services.AddTransient(f => new DatabaseServices());
             services.BuildServiceProvider();
         }
         private void RegisterUnhandledExceptionEvent()
