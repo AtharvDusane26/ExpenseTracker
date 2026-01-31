@@ -13,25 +13,27 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntitySaving: EntityBase
     {
-        public EntitySaving(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         [DataMember]
-        public double Amount { get; set; }
+        public virtual double Amount { get; set; }
         [DataMember]
-        public DateTime Date { get; set; }
+        public virtual DateTime Date { get; set; }
         [DataMember]
-        public string Category { get; set; }
-        public ISaving Get()
+        public virtual string Category { get; set; }
+        public virtual ISaving Get()
         {
             var saving = new Saving(Id, Amount, Date,Category);
             saving.UpdateDate(Date);
             return saving;
         }
 
-        public void Set(ISaving value)
+        public virtual void Set(ISaving value, string parentId = "")
         {
             var saving = value as Saving;
             if (saving != null)
             {
+                this.Id = saving.SavingId;
+                if (!String.IsNullOrWhiteSpace(parentId))
+                    this.ParentId = parentId;
                 Amount = saving.Amount;
                 Date = saving.Date;
                 Category = saving.Category;

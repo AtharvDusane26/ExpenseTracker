@@ -15,12 +15,11 @@ namespace ExpenseTracker.DataManagement.Entities
     public class EntityOutcome : EntityTransaction
     {
         [DataMember]
-        public string OutComeType { get; set; }
+        public virtual string OutComeType { get; set; }
         [DataMember]
-        public DateTime? LastPaidDate { get; set; }
+        public virtual DateTime? LastPaidDate { get; set; }
 
-        public EntityOutcome(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
-        public override ITransaction Get()
+        public virtual ITransaction Get()
         {
             var outcome = new Outcome(Name, Amount, (Model.StaticData.OutcomeType)Enum.Parse(typeof(Model.StaticData.OutcomeType), OutComeType));
             outcome.Create(Id);
@@ -30,11 +29,14 @@ namespace ExpenseTracker.DataManagement.Entities
             outcome.LastPaidDate = LastPaidDate;
             return outcome;
         }
-        public override void Set(ITransaction value)
+        public virtual void Set(ITransaction value, string parentId = "")
         {
             var outcome = value as Outcome;
             if (outcome != null)
             {
+                Id = outcome.Id;
+                if (!String.IsNullOrWhiteSpace(parentId))
+                    this.ParentId = parentId;
                 Name = outcome.Name;
                 Amount = outcome.Amount;
                 DayOfTransaction = outcome.DayOfTransaction;

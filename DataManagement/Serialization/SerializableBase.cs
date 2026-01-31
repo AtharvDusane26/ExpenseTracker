@@ -57,7 +57,7 @@ namespace ExpenseTracker.DataManagement.Serialization
                 var dataManager = services.Resolve<DataManager>();
                 foreach (var user in value)
                 {
-                    var entityUser = new EntityUser(user.UserId);
+                    var entityUser = new EntityUser();
                     entityUser.Set(user);
                     pocos.Add(entityUser);
                 }

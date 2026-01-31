@@ -12,18 +12,17 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public abstract class EntityTransaction : EntityBase
     {
-        public EntityTransaction(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         [DataMember]
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         [DataMember]
-        public double Amount { get; set; }
+        public virtual double Amount { get; set; }
         [DataMember]
-        public bool Freeze { get; set; }
+        public virtual bool Freeze { get; set; }
         [DataMember]
-        public int DayOfTransaction { get; set; }
+        public virtual int DayOfTransaction { get; set; }
         [DataMember]
-        public bool GiveReminder { get; set; }
-        public abstract ITransaction Get();
-        public abstract void Set(ITransaction value);      
+        public virtual bool GiveReminder { get; set; }
+     //   public  abstract ITransaction Get();
+    //    public abstract void Set(ITransaction value, string parentId = "");      
     }
 }

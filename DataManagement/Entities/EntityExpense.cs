@@ -11,21 +11,20 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntityExpense : EntityBase
     {
-        public EntityExpense(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         [DataMember]
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         [DataMember]
-        public double Amount { get; set; }
+        public virtual double Amount { get; set; }
         [DataMember]
-        public DateTime DateOfExpense { get; set; }
+        public virtual DateTime DateOfExpense { get; set; }
         [DataMember]
-        public string Description { get; set; }
+        public virtual string Description { get; set; }
         [DataMember]
-        public string Category { get; set; }
+        public virtual string Category { get; set; }
         [DataMember]
-        public bool Freeze { get; set; }
-      
-        public IExpense Get()
+        public virtual bool Freeze { get; set; }
+
+        public virtual IExpense Get()
         {
             var expense = new Expense(Id);
             expense.Name = this.Name;
@@ -35,12 +34,15 @@ namespace ExpenseTracker.DataManagement.Entities
             expense.Category = this.Category;
             expense.FreezeTransaction(this.Freeze);
             return expense;
-        }      
-        public void Set(IExpense value)
+        }
+        public virtual void Set(IExpense value, string parentId = "")
         {
-           var expense = value as IExpense;
+            var expense = value as IExpense;
             if (expense != null)
             {
+                this.Id = value.ExpenseId;
+                if (!String.IsNullOrWhiteSpace(parentId))
+                    this.ParentId = parentId;
                 this.Name = expense.Name;
                 this.Amount = expense.Amount;
                 this.DateOfExpense = expense.DateOfExpense;
@@ -48,6 +50,6 @@ namespace ExpenseTracker.DataManagement.Entities
                 this.Category = expense.Category;
                 this.Freeze = expense.Freeze;
             }
-        }    
+        }
     }
 }

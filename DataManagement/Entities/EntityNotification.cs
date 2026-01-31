@@ -8,41 +8,41 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntityNotification : EntityBase
     {
-        public EntityNotification(string primaryKey, string foreignKey = null)
-            : base(primaryKey, foreignKey) { }
+      
+        [DataMember]
+        public virtual string Name { get; set; }
 
         [DataMember]
-        public string Name { get; set; }
+        public virtual string ReferenceObjectId { get; set; } // you can store object ID or type info
 
         [DataMember]
-        public string ReferenceObjectId { get; set; } // you can store object ID or type info
+        public virtual NotificationType Type { get; set; }
 
         [DataMember]
-        public NotificationType Type { get; set; }
+        public virtual DateTime Date { get; set; }
 
         [DataMember]
-        public DateTime Date { get; set; }
+        public virtual string Message { get; set; }
 
         [DataMember]
-        public string Message { get; set; }
+        public virtual bool IsRead { get; set; }
 
         [DataMember]
-        public bool IsRead { get; set; }
+        public virtual string AccentColor { get; set; }
 
-        [DataMember]
-        public string AccentColor { get; set; }
-
-        public INotification Get()
+        public virtual INotification Get()
         {
             var notification = new Notification(Id,Name, ReferenceObjectId, Type, Message,Date);
             if (IsRead) notification.MarkAsRead();
             return notification;
         }
 
-        public void Set(INotification value)
+        public virtual void Set(INotification value, string parentId = "")
         {
             if (value == null) return;
-
+            this.Id = value.Id; 
+            if (!String.IsNullOrWhiteSpace(parentId))
+                this.ParentId = parentId;
             Name = value.Name;
             ReferenceObjectId = value.ReferenceObjectId;
             Type = value.Type;

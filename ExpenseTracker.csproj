@@ -16,11 +16,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FluentNHibernate" Version="3.4.1" />
 		<PackageReference Include="LiveChartsCore" Version="2.0.0-beta.90" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-beta.90" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.90" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+		<PackageReference Include="NHibernate" Version="5.6.0" />
 		<PackageReference Include="SkiaSharp" Version="3.119.1" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="System.Data.SQLite" Version="2.0.2" />
+		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Application">
+	    <HintPath>Reference Assemblies\Application.dll</HintPath>
+	  </Reference>
+	  <Reference Include="DBConfig">
+	    <HintPath>Reference Assemblies\DBConfig.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 
 </Project>

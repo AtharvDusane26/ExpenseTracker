@@ -14,26 +14,23 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntityTransactionHistory : EntityBase
     {
-        public EntityTransactionHistory(string primaryKey, string foreignKey = null)
-            : base(primaryKey, foreignKey) { }
+        [DataMember]
+        public virtual DateTime Date { get; set; }
 
         [DataMember]
-        public DateTime Date { get; set; }
+        public virtual double Balance { get; set; }
 
         [DataMember]
-        public double Balance { get; set; }
+        public virtual double SavingBalance { get; set; }
 
         [DataMember]
-        public double SavingBalance { get; set; }
+        public virtual double TotalExpenseAmount { get; set; }
 
         [DataMember]
-        public double TotalExpenseAmount { get; set; }
-
-        [DataMember]
-        public string HistoryData { get; set; }  // StringBuilder cannot be serialized directly
+        public virtual string HistoryData { get; set; }  // StringBuilder cannot be serialized directly
 
         // Convert Entity to ITransactionHistory
-        public ITransactionHistory Get()
+        public virtual ITransactionHistory Get()
         {
             var transactionHistory = new TransactionHistory(Id);
             transactionHistory.Update(Balance, SavingBalance, TotalExpenseAmount, this.Date);
@@ -42,11 +39,13 @@ namespace ExpenseTracker.DataManagement.Entities
         }
 
         // Set Entity properties from ITransactionHistory
-        public void Set(ITransactionHistory value)
+        public virtual void Set(ITransactionHistory value, string parentId = "")
         {
             if (value != null)
             {
-                this.Date = value.Date;
+                this.Id = value.Id;
+                if (!String.IsNullOrWhiteSpace(parentId))
+                    this.ParentId = parentId;
                 this.Balance = value.Balance;
                 this.SavingBalance = value.SavingBalance;
                 this.TotalExpenseAmount = value.TotalExpenseAmount;

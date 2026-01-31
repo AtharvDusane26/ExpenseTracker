@@ -11,32 +11,31 @@ namespace ExpenseTracker.DataManagement.Entities
     [DataContract]
     public class EntityFinancialGoal : EntityBase
     {
-        public EntityFinancialGoal(string primaryKey, string foreignKey = null) : base(primaryKey, foreignKey) { }
         [DataMember]
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         [DataMember]
-        public double TargetAmount { get; set; }
+        public virtual double TargetAmount { get; set; }
         [DataMember]
-        public int DurationInMonths { get; set; }
+        public virtual int DurationInMonths { get; set; }
         [DataMember]
-        public double MonthlyContribution { get; set; }
+        public virtual double MonthlyContribution { get; set; }
         [DataMember]
-        public DateTime StartDate { get; set; }
+        public virtual DateTime StartDate { get; set; }
         [DataMember]
-        double MonthlyInterestRate { get; set; }
+        public virtual double MonthlyInterestRate { get; set; }
         [DataMember]
-        public bool Running { get; set; }
+        public virtual bool Running { get; set; }
 
         [DataMember]
-        public double CollectedAmount { get; set; }
+        public virtual double CollectedAmount { get; set; }
 
         [DataMember]
-        public DateTime EndDate { get; set; }
+        public virtual DateTime EndDate { get; set; }
 
         [DataMember]
-        public DateTime DateOfLastContribution { get; set; }
+        public virtual DateTime DateOfLastContribution { get; set; }
 
-        public IFinancialGoal Get()
+        public virtual IFinancialGoal Get()
         {
             var goal = new FinancialGoal(Id, Name, TargetAmount, DurationInMonths);
             goal.MonthlyInterestRate = MonthlyInterestRate;
@@ -50,11 +49,14 @@ namespace ExpenseTracker.DataManagement.Entities
             return goal;
         }
 
-        public void Set(IFinancialGoal value)
+        public virtual void Set(IFinancialGoal value, string parentId = "")
         {
             var goal = value as FinancialGoal;
             if (goal != null)
             {
+                this.Id = goal.GoalId;
+                if (!String.IsNullOrWhiteSpace(parentId))
+                    this.ParentId = parentId;
                 this.Name = goal.Name;
                 this.TargetAmount = goal.TargetAmount;
                 this.DurationInMonths = goal.DurationInMonths;
