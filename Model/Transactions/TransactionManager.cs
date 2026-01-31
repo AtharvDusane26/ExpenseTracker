@@ -1,12 +1,13 @@
-﻿using ExpenseTracker.Model.IncomeSources;
-using ExpenseTracker.Model.OutcomeSources;
+﻿using ExpenseTracker.DataManagement.Database;
 using ExpenseTracker.Model.Expenses;
+using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.OutcomeSources;
+using ExpenseTracker.Model.Services;
+using ExpenseTracker.Model.StaticData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExpenseTracker.Model.StaticData;
-using ExpenseTracker.Model.Services;
-using ExpenseTracker.Model.Notifications;
 
 namespace ExpenseTracker.Model.Transactions
 {
@@ -35,7 +36,7 @@ namespace ExpenseTracker.Model.Transactions
             var id = Guid.NewGuid().ToString();
             income.Create(id);
             IncomeProvider.AddIncome(income);
-            Save();
+            SaveTransaction(income,CRUDOperation.Insert);
 
             // Notification
             AddNotification(name, id, NotificationType.Income, $"Income '{name}' of Rs.{amount} added.");
@@ -51,7 +52,7 @@ namespace ExpenseTracker.Model.Transactions
                 IncomeProvider.DeleteIncome(name);
                 AddNotification(name, income.Id, NotificationType.Other, $"Income '{name}' deleted.");
             }
-            Save();
+            SaveTransaction(income,CRUDOperation.Delete);
         }
 
         internal void UpdateIncome(string id, IncomeType type, string name, double amount, bool freeze, bool giveReminder, int dayOfTransaction)
@@ -68,7 +69,7 @@ namespace ExpenseTracker.Model.Transactions
             income.SetReminder(giveReminder);
             (income as ITransaction).UpdateTransactionDay(dayOfTransaction);
             IncomeProvider.UpdateIncome(income);
-            Save();
+            SaveTransaction(income,CRUDOperation.Update);
 
             // Notification
             AddNotification(name, id, NotificationType.Other, $"Income '{name}' updated.");
@@ -83,7 +84,7 @@ namespace ExpenseTracker.Model.Transactions
             outcome.Create(Guid.NewGuid().ToString());
             outcome.UpdateTransactionDay(dayOfTransaction);
             OutcomeProvider.AddOutcome(outcome);
-            Save();
+            SaveTransaction(outcome,CRUDOperation.Insert);
 
             // Notification
             AddNotification(name, outcome.Id, NotificationType.Outcome, $"Outcome '{name}' of Rs.{amount} added.");
@@ -98,8 +99,9 @@ namespace ExpenseTracker.Model.Transactions
             {
                 OutcomeProvider.DeleteOutcome(name);
                 AddNotification(name, outcome.Id, NotificationType.Other, $"Outcome '{name}' deleted.");
+                SaveTransaction(outcome, CRUDOperation.Delete);
+
             }
-            Save();
         }
 
         internal void UpdateOutcome(string id, string name, double amount, OutcomeType outcomeType, int dayOfTransaction, bool freeze, bool giveReminder, DateTime? lastPaidDate)
@@ -111,7 +113,7 @@ namespace ExpenseTracker.Model.Transactions
             outcome.FreezeTransaction(freeze);
             outcome.SetReminder(giveReminder);
             OutcomeProvider.UpdateOutcome(outcome);
-            Save();
+            SaveTransaction(outcome,CRUDOperation.Update);
 
             // Notification
             AddNotification(name, id, NotificationType.Other, $"Outcome '{name}' updated.");
@@ -131,24 +133,24 @@ namespace ExpenseTracker.Model.Transactions
             {
 
                 switch (outcome.OutComeType)
-                {
+            {
                     case Model.StaticData.OutcomeType.Daily:
                         if (outcome.LastPaidDate?.Day == DateTime.Today.Day)
-                        {
+        {
                             return false;
-                        }
+                    }
                         return true;
                     case Model.StaticData.OutcomeType.Monthly:
                         if (outcome.LastPaidDate?.Month == DateTime.Today.Month)
                         {
                             return false;
-                        }
+                }
                         return true;
                     case Model.StaticData.OutcomeType.Yearly:
                         if (outcome.LastPaidDate?.Year == DateTime.Today.Year)
-                        {
+                {
                             return false;
-                        }
+                    }
                         return true;
                 }
             }
@@ -158,6 +160,7 @@ namespace ExpenseTracker.Model.Transactions
             }
             return true;
         }
+        // ---------------- REMINDERS ----------------
         internal List<INotification> GetUpcomingReminders(int daysBefore = 3)
         {
             var notifications = new List<INotification>();
@@ -169,9 +172,8 @@ namespace ExpenseTracker.Model.Transactions
 
             foreach (var transaction in _user.Transactions)
             {
-                if (!VerifyTransactionToSendNotification(transaction) && transaction.GiveReminder == true)
+                if (transaction.Freeze)
                     continue;
-
 
                 int daysUntilTransaction = transaction.DayOfTransaction - today.Day;
 
@@ -246,12 +248,17 @@ namespace ExpenseTracker.Model.Transactions
         }
 
         // ---------------- PRIVATE METHODS ----------------
-        private void Save()
+      
+        private void SaveTransaction(ITransaction value, CRUDOperation operation)
         {
-            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            userManager.Save(_user as User);
+            var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+            dbService.UpdateTransaction(value, (_user as User), operation);
         }
-
+        //private void SaveLentAndBorrow(ILentAndBorrowMoney value, CRUDOperation operation)
+        //{
+        //    var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+        //    dbService.UpdateLentAndBorrowMoney(value, (_user as User).UserId, operation);
+        //}
         private void AddNotification(string name, string referenceId, NotificationType type, string message)
         {
             var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();

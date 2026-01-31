@@ -1,4 +1,5 @@
-﻿using ExpenseTracker.Model.Notifications;
+﻿using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.Model.Notifications;
 using ExpenseTracker.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace ExpenseTracker.Model.Expenses
             (_user as User).Balance -= amount; // Deduct balance
             expense.FreezeTransaction(freeze);
 
-            Save();
+            Save(expense, CRUDOperation.Insert);
 
             AddNotification("Expense Added", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' of Rs.{amount} added in category '{category}'.");
 
@@ -58,7 +59,7 @@ namespace ExpenseTracker.Model.Expenses
                 // Apply new amount
                 (_user as User).Balance -= amount;
 
-                Save();
+                Save(expense, CRUDOperation.Insert);
 
                 AddNotification("Expense Updated", expense.ExpenseId, NotificationType.Debited, $"Expense '{name}' updated with new amount Rs.{amount} in category '{category}'.");
             }
@@ -72,16 +73,16 @@ namespace ExpenseTracker.Model.Expenses
                 (_user as User).Balance += expense.Amount; // Refund balance
                 _user.UserExpenses.Remove(expense);
 
-                Save();
+                Save(expense, CRUDOperation.Delete);
 
                 AddNotification("Expense Deleted", expense.ExpenseId, NotificationType.Credited, $"Expense '{expense.Name}' of Rs.{expense.Amount} deleted and amount refunded to balance.");
             }
         }
 
-        private void Save()
+        private void Save(IExpense expense ,CRUDOperation operation)
         {
-            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            userManager.Save(_user as User);
+            var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+            dbService.UpdateExpense(expense, (_user as User), operation);
         }
 
         private void AddNotification(string name, string referenceId, NotificationType type, string message)

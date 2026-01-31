@@ -1,5 +1,6 @@
-﻿using ExpenseTracker.Model.Services;
+﻿using ExpenseTracker.DataManagement.Database;
 using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,21 +19,21 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
         internal IFinancialGoal CreateGoal(string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
         {
             var goal = _user.CreateGoal(name, targetAmount, durationInYears, monthlyInterestRate);
-            Save();
+            Save(goal, CRUDOperation.Insert);
             AddNotification("Goal Created", goal.GoalId, NotificationType.Other, $"Financial goal '{name}' created with target Rs.{targetAmount}.");
             return goal;
         }
         internal void UpdateGoal(string id, string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
         {
-            _user.UpdateGoal(id, name, targetAmount, durationInYears, monthlyInterestRate);
-            Save();
+           var goal = _user.UpdateGoal(id, name, targetAmount, durationInYears, monthlyInterestRate);
+            Save(goal,CRUDOperation.Update);
             AddNotification("Goal Updated", id, NotificationType.Other, $"Financial goal '{name}' has been updated.");
         }
         internal void DeleteGoal(string goalId)
         {
             var goal = _user.GetGoal(goalId);
             _user.DeleteGoal(goalId);
-            Save();
+            Save(goal, CRUDOperation.Delete);
             if (goal != null)
                 AddNotification("Goal Deleted", goal.GoalId, NotificationType.Other, $"Financial goal '{goal.Name}' has been deleted.");
         }
@@ -55,8 +56,8 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
                     NotificationType.Credited,
                     $"Rs.{goal.MonthlyContribution} contributed to savings for goal '{goal.Name}'."
                 );
+                Save(goal,CRUDOperation.Update);
             }
-            Save();
         }
         internal void StartGoal(string id)
         {
@@ -64,7 +65,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
             if (goal != null && !goal.Running)
             {
                 goal.Start(DateTime.Now);
-                Save();
+                Save(goal,CRUDOperation.Update);
                 AddNotification("Goal Started", goal.GoalId, NotificationType.Other, $"Financial goal '{goal.Name}' has been started from '{DateTime.Now}'.");
             }
         }
@@ -74,7 +75,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
             if (goal != null && goal.Running)
             {
                 goal.Stop();
-                Save();
+                Save(goal,CRUDOperation.Update);
                 AddNotification("Goal Stopped", goal.GoalId, NotificationType.Other, $"Financial goal '{goal.Name}' has been stopped.");
             }
         }
@@ -106,7 +107,7 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
                 var cmt = goal.CollectedAmount;
                 goal.AddAmount();
                 (_user as User).AddToSavings(goal.MonthlyContribution, DateTime.Now, goal.Name);
-                Save();
+                Save(goal,CRUDOperation.Insert);
                 AddNotification(
                     "Amount Added to Goal",
                     goal.GoalId,
@@ -117,10 +118,10 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
             }
             return false;
         }
-        private void Save()
+        private void Save(IFinancialGoal value, CRUDOperation operation)
         {
-            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            userManager.Save(_user as User);
+            var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+            dbService.UpdateFinancialGoal(value, (_user as User), operation);
         }
 
         private void AddNotification(string name, string referenceId, NotificationType type, string message)

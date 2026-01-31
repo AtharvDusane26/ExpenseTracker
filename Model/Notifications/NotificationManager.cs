@@ -1,4 +1,6 @@
-﻿using ExpenseTracker.DataManagement.Serialization;
+﻿using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.DataManagement.Serialization;
+using ExpenseTracker.Model.SavingsAndFinancialGoals;
 using ExpenseTracker.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -37,7 +39,7 @@ namespace ExpenseTracker.Model.Notifications
             _provider.AddNotification(notification);
             if (notification.Type == NotificationType.Debited || notification.Type == NotificationType.Credited)
                 (_provider as User)?.AddToHistory(notification.Message);
-            Save();
+            Save(notification, CRUDOperation.Insert);
         }
 
         /// <summary>
@@ -45,8 +47,8 @@ namespace ExpenseTracker.Model.Notifications
         /// </summary>
         public void DeleteNotification(string id)
         {
-            _provider.DeleteNotification(id);
-            Save();
+           var notification= _provider.DeleteNotification(id);
+            Save(notification, CRUDOperation.Delete);
         }
 
         /// <summary>
@@ -57,13 +59,13 @@ namespace ExpenseTracker.Model.Notifications
             var notification = _provider.Notifications.FirstOrDefault(n => n.Id == id);
             if (notification == null) return;
             notification.MarkAsRead();         
-            Save();
+            Save(notification,CRUDOperation.Update);
         }
         public void MarkAsUnRead(string id)
         {
             var notification = _provider.Notifications.FirstOrDefault(n => n.Id == id);
             notification?.MarkAsUnRead();
-            Save();
+            Save(notification,CRUDOperation.Update);
         }
         /// <summary>
         /// Get unread notifications.
@@ -85,8 +87,9 @@ namespace ExpenseTracker.Model.Notifications
             foreach (var n in all)
             {
                 _provider.DeleteNotification(n.Name);
+                Save(n,CRUDOperation.Delete);
+
             }
-            Save();
         }
 
         /// <summary>
@@ -129,10 +132,11 @@ namespace ExpenseTracker.Model.Notifications
                 .Where(n => n.Type == type)
                 .ToList();
         }
-        private void Save()
+      
+        private void Save(INotification value, CRUDOperation operation)
         {
-            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            userManager.Save(_provider as User);
+            var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+            dbService.UpdateNotification(value, (_provider as User), operation);
         }
     }
 }

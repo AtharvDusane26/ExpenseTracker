@@ -1,5 +1,7 @@
-﻿using ExpenseTracker.Model.Services;
+﻿using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.Model.Expenses;
 using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +19,14 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
 
         internal void AddToSavings(double amount,DateTime date, string category = "General")
         {
-            _user.AddToSavings(amount, date,category);
-            Save();
+         var data =  _user.AddToSavings(amount, date,category);
+            Save(data,CRUDOperation.Insert);
             AddNotification("Savings Added", $"Savings_{(_user as User).UserId}", NotificationType.Credited, $"Rs.{amount} added to savings in category '{category}'.");
         }
 
         internal void WithdrawFromSavings(double amount,string savingId)
         {
             _user.WithdrawFromSavings(amount,savingId);
-            Save();
             AddNotification("Savings Withdrawn", $"Savings_{(_user as User).UserId}", NotificationType.Debited, $"Rs.{amount} withdrawn from savings.");
         }
 
@@ -38,12 +39,12 @@ namespace ExpenseTracker.Model.SavingsAndFinancialGoals
 
         internal List<ISaving> Get() => _user.Savings.ToList();
 
-        private void Save()
+       
+        private void Save(ISaving value, CRUDOperation operation)
         {
-            var userManager = ServiceProvider.Instance.Resolve<UserManager>();
-            userManager.Save(_user as User);
+            var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+            dbService.UpdateSavings(value, (_user as User), operation);
         }
-
         private void AddNotification(string name, string referenceId, NotificationType type, string message)
         {
             var notificationManager = ServiceProvider.Instance.Resolve<NotificationManager>();

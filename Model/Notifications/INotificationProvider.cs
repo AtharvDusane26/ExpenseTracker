@@ -10,7 +10,7 @@ namespace ExpenseTracker.Model.Notifications
     {
         List<INotification> Notifications { get; }
         void AddNotification(INotification notification);
-        void DeleteNotification(string id);
+        INotification DeleteNotification(string id);
 
     }
 }

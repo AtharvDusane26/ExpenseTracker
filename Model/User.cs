@@ -1,14 +1,16 @@
-﻿using System;
+﻿using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.Model.Expenses;
+using ExpenseTracker.Model.IncomeSources;
+using ExpenseTracker.Model.Notifications;
+using ExpenseTracker.Model.OutcomeSources;
+using ExpenseTracker.Model.SavingsAndFinancialGoals;
+using ExpenseTracker.Model.Services;
+using ExpenseTracker.Model.StaticData;
+using ExpenseTracker.Model.Transactions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExpenseTracker.Model.IncomeSources;
-using ExpenseTracker.Model.OutcomeSources;
-using ExpenseTracker.Model.Expenses;
-using ExpenseTracker.Model.SavingsAndFinancialGoals;
-using ExpenseTracker.Model.Transactions;
 using System.Xml.Linq;
-using ExpenseTracker.Model.StaticData;
-using ExpenseTracker.Model.Notifications;
 
 namespace ExpenseTracker.Model
 {
@@ -292,9 +294,9 @@ namespace ExpenseTracker.Model
             _notifications.Add(notification);
         }
         // Delete a notification by reference object ID or Name
-        public void DeleteNotification(string id)
+        public INotification DeleteNotification(string id)
         {
-            if (string.IsNullOrEmpty(id)) return;
+            if (string.IsNullOrEmpty(id)) return null;
 
             var toRemove = _notifications.FirstOrDefault(n =>
             {
@@ -303,6 +305,7 @@ namespace ExpenseTracker.Model
 
             if (toRemove != null)
                 _notifications.Remove(toRemove);
+            return toRemove;
         }
         // ------------------- ISavingProvider -------------------
         public ISaving AddToSavings(double amount, DateTime date, string category = "General")
@@ -335,11 +338,16 @@ namespace ExpenseTracker.Model
                 {
                     remaining -= s.Amount;
                     _savings.Remove(s);
+                    var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+                    dbService.UpdateSavings(s, this, CRUDOperation.Delete);
+
                 }
                 else
                 {
                     s.UpdateAmount(s.Amount - remaining);
                     remaining = 0;
+                    var dbService = ServiceProvider.Instance.Resolve<DatabaseServices>();
+                    dbService.UpdateSavings(s, this, CRUDOperation.Update);
                 }
             }
 
@@ -395,7 +403,7 @@ namespace ExpenseTracker.Model
             _goals.Add(goal);
             return goal;
         }
-        public void UpdateGoal(string id, string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
+        public IFinancialGoal UpdateGoal(string id, string name, double targetAmount, int durationInYears, double monthlyInterestRate = 0)
         {
             var goal = _goals.FirstOrDefault(g => g.GoalId == id);
             if (goal != null)
@@ -403,7 +411,9 @@ namespace ExpenseTracker.Model
                 _goals.Remove(goal);
                 goal = new FinancialGoal(id, name, targetAmount, durationInYears);
                 _goals.Add(goal);
+                return goal;
             }
+            return null;
         }
 
         public void DeleteGoal(string goalId)

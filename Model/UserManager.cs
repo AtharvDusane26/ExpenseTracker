@@ -1,4 +1,6 @@
-﻿using ExpenseTracker.DataManagement.Serialization;
+﻿using DBConfig;
+using ExpenseTracker.DataManagement.Database;
+using ExpenseTracker.DataManagement.Serialization;
 using ExpenseTracker.Model.Expenses;
 using ExpenseTracker.Model.IncomeSources;
 using ExpenseTracker.Model.MonitoringAndReporting;
@@ -47,7 +49,7 @@ namespace ExpenseTracker.Model
         private User GetUser(string name)
         {
             var services = ServiceProvider.Instance;
-            var serializableBase = services.Resolve<SerializableBase>();
+            var serializableBase = services.Resolve<DatabaseServices>();
             var users = serializableBase.Get();
             if (users != null && users.Count > 0)
             {
@@ -106,7 +108,7 @@ namespace ExpenseTracker.Model
         public bool CheckIfUserNameAlreadyExist(string name)
         {
             var services = ServiceProvider.Instance;
-            var serializableBase = services.Resolve<SerializableBase>();
+            var serializableBase = services.Resolve<DatabaseServices>();
             var users = serializableBase.Get();
             if (users.Any(o => o.Name == name))
                 return true;
@@ -329,11 +331,12 @@ namespace ExpenseTracker.Model
         internal void Save(User user)
         {
             var services = ServiceProvider.Instance;
-            var serializableBase = services.Resolve<SerializableBase>();
+            var serializableBase = services.Resolve<DatabaseServices>();
             var users = serializableBase.Get();
             if (users.Any(o => o.UserId == user.UserId))
             {
                 users.RemoveAll(u => u.UserId == user.UserId);
+
             }
             users.Add(user);
             serializableBase.Set(users);
